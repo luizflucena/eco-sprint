@@ -6,3 +6,20 @@ html, body {
 canvas {
   display: block;
 }
+
+/* debug */
+
+.debug-container {
+  font-family: monospace;
+}
+
+.debug-gauges {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 50px;
+  font-size: 1.2em;
+}
+
+.debug-gauges > div {
+  margin: 5px;
+}

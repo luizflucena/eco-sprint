@@ -5,11 +5,24 @@ function setup() {
 	angleMode(DEGREES)
 	colorMode(RGB, 1)
 	ortho()
+
+	debug = new DebugConsole()
 }
 
 function draw() {
-	background(0.5);
+	background(0.5)
+	push()
 
-	rotateY(millis() * 5e-2)
-	box(50, 50, 50)
+	translate(-width * 0.5, -height * 0.5)
+	line(0, height - 50, width, height - 50)
+
+	pop()
+
+	if(keyIsDown(LEFT_ARROW)) {
+		player.move(-10, 0)
+	}
+	if(keyIsDown(RIGHT_ARROW)) {
+		player.move(10, 0)
+	}
+	player.draw()
 }
