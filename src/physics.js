@@ -1,12 +1,45 @@
 // @ts-nocheck
 const defaultGravity = 9.8
 
+class PhysicsObject {
+    constructor() {
+        this.enabled = false
+        this.hitbox = new Hitbox()
+        this.gravity = defaultGravity
+
+        this._velocity = Vector2.zero
+    }
+
+    updatePosition(objPosition) {
+        if(!this.enabled) return
+
+        this._velocity.y -= this.gravity * deltaTime * 1e-3
+
+        const groundHit = this.hitbox.testCollisionAABB(levelGround, this._velocity)
+        debug.updateGauge('free', groundHit.hasHit)
+        if(groundHit.hasHit) {
+            this._velocity.sub(groundHit.overshoot)
+        }
+
+        objPosition.add(this._velocity)
+        this.hitbox.transformHitbox(objPosition, 1)
+    }
+}
+
 // Hitbox simples AABB
 class Hitbox {
     // Dois pontos opostos da diagonal de um quadrado (min e max)
     constructor(minX = -50, minY = -50, maxX = 50, maxY = 50) {
         this.localMin = new p5.Vector(minX, minY)
         this.localMax = new p5.Vector(maxX, maxY)
+
+        this.min = this.localMin.copy()
+        this.max = this.localMax.copy()
+    }
+
+    set(minX, minY, maxX, maxY) {
+        this.localMin.set(minX, minY)
+        this.localMax.set(maxX, maxY)
 
         this.min = this.localMin.copy()
         this.max = this.localMax.copy()
@@ -36,24 +69,38 @@ class Hitbox {
     //
     // O parâmetro offset é útil para determinar uma colisão que ainda
     // não aconteceu (pode ser um vetor velocidade, por exemplo)
-    testCollisionAABB(otherHitbox, offset) {
-        let colliderMin, colliderMax
+    testCollisionAABB(physicsObj, offset) {
+        const otherHitbox = physicsObj.hitbox
+
+        // Para utilizar o offset aqui, em vez de testarmos a colisão movendo esta
+        // hitbox de acordo com o offset, movemos, na verdade, o hitbox do outro objeto
+        // na direção oposta do offset. É assim porque eu me confundi
+        let otherMin, otherMax
         if(offset instanceof p5.Vector) {
-            colliderMin = otherHitbox.min.copy().add(offset)
-            colliderMax = otherHitbox.max.copy().add(offset)
+            otherMin = otherHitbox.min.copy().sub(offset.x, offset.y)
+            otherMax = otherHitbox.max.copy().sub(offset.x, offset.y)
         } else {
-            colliderMin = otherHitbox.min
-            colliderMax = otherHitbox.max
+            otherMin = otherHitbox.min
+            otherMax = otherHitbox.max
         }
 
         const hit = new HitInfo()
 
         hit.hasHit =
-            this.max.x >= colliderMin.x &&
-            this.min.x <= colliderMax.x &&
-            this.max.y >= colliderMin.y &&
-            this.min.y <= colliderMax.y
+            this.max.x >= otherMin.x &&
+            this.min.x <= otherMax.x &&
+            this.max.y >= otherMin.y &&
+            this.min.y <= otherMax.y
 
+        hit.overshoot.x = minAbs(this.max.x - otherMin.x, this.min.x - otherMax.x)
+        hit.overshoot.y = minAbs(this.max.y - otherMin.y, this.min.y - otherMax.y)
+        if(minAbs(hit.overshoot.x, hit.overshoot.y) === hit.overshoot.x) {
+            hit.overshoot.y = 0
+        } else {
+            hit.overshoot.x = 0
+        }
+
+        return hit
     }
 
     // Representação visual da hitbox para debug
@@ -81,13 +128,9 @@ class Hitbox {
 
 // Contém todas as informações necessárias a respeito de uma colisão
 class HitInfo {
-    constructor(
-        hasHit = false, // Se está colidindo ou não no momento
-        overshoot = Vector2.zero, // Quanto o objeto passou do ponto de colisão
-        normal = Vector2.zero, // Vetor normal da superfície com a qual se colidiu
-    ) {
-        this.hasHit = hasHit
-        this.overshoot = overshoot
-        this.normal = normal
+    constructor() {
+        this.hasHit = false // Se está colidindo ou não no momento
+        this.overshoot = Vector2.zero // Quanto o objeto atravessou a hitbox, ou passou do ponto de colisão
+        this.normal = Vector2.zero // Vetor normal da superfície com a qual se colidiu
     }
 }
