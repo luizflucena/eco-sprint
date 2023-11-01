@@ -4,24 +4,38 @@ const defaultGravity = 9.8
 class PhysicsObject {
     constructor() {
         this.enabled = false
+
         this.hitbox = new Hitbox()
         this.gravity = defaultGravity
+        this.friction = 0.25
 
-        this._velocity = Vector2.zero
+        this.velocity = Vector2.zero
+    }
+
+    applyForce(x, y) {
+        this.velocity.x += x
+        this.velocity.y += y
     }
 
     updatePosition(objPosition) {
         if(!this.enabled) return
 
-        this._velocity.y -= this.gravity * deltaTime * 1e-3
+        this.velocity.y -= this.gravity * deltaTime * 1e-3
 
-        const groundHit = this.hitbox.testCollisionAABB(levelGround, this._velocity)
-        debug.updateGauge('free', groundHit.hasHit)
+        const groundHit = this.hitbox.testCollisionAABB(levelGround, this.velocity)
         if(groundHit.hasHit) {
-            this._velocity.sub(groundHit.overshoot)
+            this.velocity.sub(groundHit.overshoot)
+
+            const friction = Math.min(this.friction, levelGround.friction)
+            const gravityFrictionWeight = groundHit.normal.dot(0, 1)
+            if(Math.abs(this.velocity.x) > 1e-2)
+                this.velocity.x -= Math.sign(this.velocity.x) * gravityFrictionWeight * Math.min(friction, Math.abs(this.velocity.x))
+
+            debug.updateGauge('free', this.velocity.x)
+            
         }
 
-        objPosition.add(this._velocity)
+        objPosition.add(this.velocity)
         this.hitbox.transformHitbox(objPosition, 1)
     }
 }
@@ -96,8 +110,10 @@ class Hitbox {
         hit.overshoot.y = minAbs(this.max.y - otherMin.y, this.min.y - otherMax.y)
         if(minAbs(hit.overshoot.x, hit.overshoot.y) === hit.overshoot.x) {
             hit.overshoot.y = 0
+            hit.normal.x = -Math.sign(hit.overshoot.x)
         } else {
             hit.overshoot.x = 0
+            hit.normal.y = -Math.sign(hit.overshoot.y)
         }
 
         return hit

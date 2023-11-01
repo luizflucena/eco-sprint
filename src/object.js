@@ -11,11 +11,6 @@ class GameObject {
         this.physics.hitbox.transformHitbox(this.position, this.scale)
     }
 
-    move(x, y) {
-        this.position.x += x
-        this.position.y += y
-    }
-
     draw() {
         push()
         resetMatrix()

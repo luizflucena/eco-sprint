@@ -1,4 +1,5 @@
 var player
+const playerMaxVelocity = 5
 
 function setupPlayer() {
     player = new GameObject(createVector(width/2, height/2))
@@ -6,10 +7,17 @@ function setupPlayer() {
 
 function drawPlayer() {
     if(keyIsDown(LEFT_ARROW)) {
-		player.move(-10, 0)
+        player.physics.applyForce(-0.7, 0)
+
+        if(player.physics.velocity.x < -playerMaxVelocity)
+            player.physics.velocity.x = -playerMaxVelocity
 	}
 	if(keyIsDown(RIGHT_ARROW)) {
-		player.move(10, 0)
+        player.physics.applyForce(0.7, 0)
+
+        if(player.physics.velocity.x > playerMaxVelocity)
+            player.physics.velocity.x = playerMaxVelocity
 	}
+
 	player.draw()
 }
