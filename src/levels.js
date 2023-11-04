@@ -1,10 +1,20 @@
 class Level {
-    constructor(name = 'fase0') {
-        this.name = name
+    constructor() {
+        this.tilemap = new Tilemap()
+    }
+
+    draw() {
+        this.tilemap.draw()
     }
 }
+var levels = {
+    teste: new Level()
+}
 
-var levelGround = new PhysicsObject()
 function setupLevels() {
-    levelGround.hitbox.set(0, 0, 400, 50)
+    levels.teste.tilemap.tileAreaFill(0, 10, 0, 1, textures.tiles.sand)
+}
+
+function drawLevels() {
+    levels.teste.draw()
 }

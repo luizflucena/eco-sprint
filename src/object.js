@@ -16,7 +16,6 @@ class GameObject {
         resetMatrix()
         rectMode(CENTER)
         
-        this.physics.enabled = true
         this.physics.updatePosition(this.position)
         this.physics.hitbox.draw()
 

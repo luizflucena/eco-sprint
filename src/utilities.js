@@ -1,3 +1,24 @@
+// @ts-nocheck
+
+class Vector2 {
+    static create(x, y) {
+        return new p5.Vector(x, y)
+    }
+
+    static get zero() { return new p5.Vector(0, 0) }
+    static get one() { return new p5.Vector(1, 1) }
+    static get right() { return new p5.Vector(1, 0) }
+
+    static lerp(from, to, value) {
+        let result = this.zero
+
+        result.x = from.x + (to.x - from.x) * value
+        result.y = from.y + (to.y - from.y) * value
+
+        return result
+    }
+}
+
 function clamp(value, min, max) {
     return Math.max(Math.min(value, max), min)
 }

@@ -1,6 +1,7 @@
 // @ts-nocheck
 const defaultGravity = 9.8
 
+var scenePhysicsObjects = []
 class PhysicsObject {
     constructor() {
         this.enabled = false
@@ -10,6 +11,9 @@ class PhysicsObject {
         this.friction = 0.25
 
         this.velocity = Vector2.zero
+
+        scenePhysicsObjects.push(this)
+        this.updateCount = 0
     }
 
     applyForce(x, y) {
@@ -22,17 +26,22 @@ class PhysicsObject {
 
         this.velocity.y -= this.gravity * deltaTime * 1e-3
 
-        const groundHit = this.hitbox.testCollisionAABB(levelGround, this.velocity)
-        if(groundHit.hasHit) {
-            this.velocity.sub(groundHit.overshoot)
+        // Testar colisões com todas as hitbox da cena
+        for(let i = 0; i < scenePhysicsObjects.length; ++i) {
+            const obj = scenePhysicsObjects[i]
+            if(obj === this) continue;
 
-            const friction = Math.min(this.friction, levelGround.friction)
-            const gravityFrictionWeight = groundHit.normal.dot(0, 1)
-            if(Math.abs(this.velocity.x) > 1e-2)
-                this.velocity.x -= Math.sign(this.velocity.x) * gravityFrictionWeight * Math.min(friction, Math.abs(this.velocity.x))
+            const hit = this.hitbox.testCollisionAABB(obj, this.velocity)
+            if(hit.hasHit) {
+                this.velocity.sub(hit.overshoot)
 
-            debug.updateGauge('free', this.velocity.x)
-            
+                const friction = Math.min(this.friction, obj.friction)
+                const gravityFrictionWeight = hit.normal.dot(0, Math.sign(this.gravity))
+                if(Math.abs(this.velocity.x) > 1e-2)
+                    this.velocity.x -= Math.sign(this.velocity.x) * gravityFrictionWeight * Math.min(friction, Math.abs(this.velocity.x))
+            }
+
+            this.updateCount += 1
         }
 
         objPosition.add(this.velocity)
@@ -81,8 +90,8 @@ class Hitbox {
 
     // Testar contato com outra hitbox AABB
     //
-    // O parâmetro offset é útil para determinar uma colisão que ainda
-    // não aconteceu (pode ser um vetor velocidade, por exemplo)
+    // O parâmetro offset projeta a posição do objeto para calcularmos uma colisão
+    // que ainda não aconteceu. Pode ser um vetor velocidade, por exemplo
     testCollisionAABB(physicsObj, offset) {
         const otherHitbox = physicsObj.hitbox
 
@@ -110,10 +119,10 @@ class Hitbox {
         hit.overshoot.y = minAbs(this.max.y - otherMin.y, this.min.y - otherMax.y)
         if(minAbs(hit.overshoot.x, hit.overshoot.y) === hit.overshoot.x) {
             hit.overshoot.y = 0
-            hit.normal.x = -Math.sign(hit.overshoot.x)
+            hit.normal.set(-Math.sign(hit.overshoot.x), 0)
         } else {
             hit.overshoot.x = 0
-            hit.normal.y = -Math.sign(hit.overshoot.y)
+            hit.normal.set(0, -Math.sign(hit.overshoot.y))
         }
 
         return hit
