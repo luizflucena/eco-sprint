@@ -1,11 +1,13 @@
-var player = new GameObject(Vector2.create(300, 300))
+var player
 const playerMaxVelocity = 5
 
 function setupPlayer() {
-    player.physics.enabled = true
+    player = new GameObject(Vector2.create(300, 100))
+    player.physics.dynamic = true
 }
 
 function drawPlayer() {
+    
     if(keyIsDown(LEFT_ARROW)) {
         player.physics.applyForce(-0.7, 0)
 
@@ -23,4 +25,5 @@ function drawPlayer() {
     }
 
 	player.draw()
+    // debug.updateGauge('free', player.position.array())
 }

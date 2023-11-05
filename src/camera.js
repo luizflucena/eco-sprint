@@ -1,6 +1,8 @@
-var orthoScale = 1.5
-var camSmoothness = 0 // 0 a 1
 var mainCam
+var orthoScale = 1
+var cameraSmoothness = 0.8 // 0 a 1
+
+var cameraPosition = Vector2.zero
 
 function setupCamera() {
     mainCam = createCamera()
@@ -13,11 +15,7 @@ function setupCamera() {
 }
 
 function drawCamera() {
-    mainCam.move(
-        (player.position.x - mainCam.eyeX) * (1 - camSmoothness),
-        (mainCam.eyeY - player.position.y) * (1 - camSmoothness),
-        0
-    )
-
-    debug.updateGauge('free', mainCam.eyeX + ', ' + mainCam.eyeY + ', ' + mainCam.eyeZ)
+    cameraPosition.set(mainCam.eyeX, mainCam.eyeY, mainCam.eyeZ)
+    Vector2.lerp(cameraPosition, player.position, /* fpsAdjustment * 10 */ 1)
+    mainCam.setPosition(cameraPosition.x, cameraPosition.y, -20)
 }

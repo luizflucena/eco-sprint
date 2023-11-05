@@ -12,7 +12,7 @@ var levels = {
 }
 
 function setupLevels() {
-    levels.teste.tilemap.tileAreaFill(0, 10, 0, 1, textures.tiles.sand)
+    levels.teste.tilemap.tileAreaFill(0, -5, 10, 0, textures.tiles.sand)
 }
 
 function drawLevels() {

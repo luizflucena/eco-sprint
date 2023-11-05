@@ -42,3 +42,15 @@ class DebugConsole {
 }
 
 var debug
+
+var fpsSum = 0, fps = 0
+function avgFPS(frameInterval) {
+    fpsSum += frameRate() === Infinity ? 0 : frameRate()
+
+    if(frameCount % frameInterval === 0) {
+        fps = fpsSum / frameInterval
+        fpsSum = 0
+    }
+
+    return fps
+}

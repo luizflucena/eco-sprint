@@ -1,22 +1,25 @@
 const tileSize = 100
 
-class Tile extends GameObject {
+class Tile {
     constructor(x, y, texture = textures.tiles.sand) {
-        super(Vector2.zero.set(x * tileSize, y * tileSize))
+        this.position = Vector2.create(x * tileSize, y * tileSize)
         this.texture = texture
+
+        this.physics = new PhysicsObject()
+        this.physics.hitbox.transformHitbox(this.position, 1)
     }
 
     draw() {
         push()
-        resetMatrix()
         rectMode(CENTER)
-        
-        // this.physics.hitbox.draw()
 
-        texture(this.texture)
-        rect(this.position.x, this.position.y, tileSize, tileSize)
+        shaders.pixelated.setUniform('uTexture', this.texture)
+        shader(shaders.pixelated)
+        square(this.position.x, this.position.y, tileSize)
 
         pop()
+
+        // this.physics.hitbox.draw()
     }
 }
 
@@ -29,9 +32,9 @@ class Tilemap {
         this.tiles.push(new Tile(x, y, texture))
     }
 
-    tileAreaFill(xStart, xEnd, yStart, yEnd, texture) {
-        for(let x = 0; x <= xEnd - xStart; ++x) {
-            for(let y = 0; y <= yEnd - yStart; ++y) {
+    tileAreaFill(xStart, yStart, xEnd, yEnd, texture) {
+        for(let x = xStart; x <= xEnd; ++x) {
+            for(let y = yStart; y <= yEnd; ++y) {
                 this.addTile(x, y, texture)
             }
         }

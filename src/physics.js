@@ -4,7 +4,8 @@ const defaultGravity = 9.8
 var scenePhysicsObjects = []
 class PhysicsObject {
     constructor() {
-        this.enabled = false
+        this.enabled = true
+        this.dynamic = false
 
         this.hitbox = new Hitbox()
         this.gravity = defaultGravity
@@ -13,7 +14,6 @@ class PhysicsObject {
         this.velocity = Vector2.zero
 
         scenePhysicsObjects.push(this)
-        this.updateCount = 0
     }
 
     applyForce(x, y) {
@@ -22,14 +22,14 @@ class PhysicsObject {
     }
 
     updatePosition(objPosition) {
-        if(!this.enabled) return
+        if(!this.enabled || !this.dynamic) return
 
-        this.velocity.y -= this.gravity * deltaTime * 1e-3
+        this.velocity.y -= this.gravity * fpsAdjustment
 
         // Testar colisões com todas as hitbox da cena
         for(let i = 0; i < scenePhysicsObjects.length; ++i) {
             const obj = scenePhysicsObjects[i]
-            if(obj === this) continue;
+            if(obj === this || !obj.enabled) continue;
 
             const hit = this.hitbox.testCollisionAABB(obj, this.velocity)
             if(hit.hasHit) {
@@ -40,8 +40,6 @@ class PhysicsObject {
                 if(Math.abs(this.velocity.x) > 1e-2)
                     this.velocity.x -= Math.sign(this.velocity.x) * gravityFrictionWeight * Math.min(friction, Math.abs(this.velocity.x))
             }
-
-            this.updateCount += 1
         }
 
         objPosition.add(this.velocity)

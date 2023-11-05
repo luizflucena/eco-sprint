@@ -10,17 +10,19 @@ class Vector2 {
     static get right() { return new p5.Vector(1, 0) }
 
     static lerp(from, to, value) {
-        let result = this.zero
+        from.x = from.x + (to.x - from.x) * value
+        from.y = from.y + (to.y - from.y) * value
 
-        result.x = from.x + (to.x - from.x) * value
-        result.y = from.y + (to.y - from.y) * value
-
-        return result
+        return from
     }
 }
 
 function clamp(value, min, max) {
     return Math.max(Math.min(value, max), min)
+}
+
+function map(value, min1, max1, min2, max2) {
+    return min2 + (value - min1) * (max2 - min2) / (max1 - min1)
 }
 
 // Retorna o número, ainda com o sinal, de menor módulo
