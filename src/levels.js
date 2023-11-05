@@ -1,4 +1,4 @@
-class Level {
+class GameLevel {
     constructor() {
         this.tilemap = new Tilemap()
     }
@@ -7,14 +7,11 @@ class Level {
         this.tilemap.draw()
     }
 }
+
 var levels = {
-    teste: new Level()
+    teste: new GameLevel()
 }
 
 function setupLevels() {
     levels.teste.tilemap.tileAreaFill(0, -5, 10, 0, textures.tiles.sand)
-}
-
-function drawLevels() {
-    levels.teste.draw()
 }

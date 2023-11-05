@@ -23,6 +23,8 @@ function setup() {
 	setupLevels()
 	setupPlayer()
 	setupCamera()
+
+	setCurrentScene(scenes.teste)
 }
 
 var fpsAdjustment = 1/75 // O deltaTime às vezes não deixa a animação suave
@@ -34,7 +36,8 @@ function draw() {
 
 	background(0.5)
 
-	drawLevels()
-	drawPlayer()
-	drawCamera()
+	// drawLevels()
+	// drawPlayer()
+	// drawCamera()
+	drawCurrentScene()
 }

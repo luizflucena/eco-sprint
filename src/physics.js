@@ -4,8 +4,10 @@ const defaultGravity = 9.8
 var scenePhysicsObjects = []
 class PhysicsObject {
     constructor() {
-        this.enabled = true
-        this.dynamic = false
+        this.enabled = false // Se colisões envolvendo o objeto serão calculadas
+        this.dynamic = false // Se o objeto deve ser afetado pela física ou permanecer estático
+
+        this.grounded = false // Se o objeto está no chão
 
         this.hitbox = new Hitbox()
         this.gravity = defaultGravity
@@ -27,20 +29,31 @@ class PhysicsObject {
         this.velocity.y -= this.gravity * fpsAdjustment
 
         // Testar colisões com todas as hitbox da cena
+        this.grounded = false
         for(let i = 0; i < scenePhysicsObjects.length; ++i) {
             const obj = scenePhysicsObjects[i]
             if(obj === this || !obj.enabled) continue;
 
             const hit = this.hitbox.testCollisionAABB(obj, this.velocity)
             if(hit.hasHit) {
+                const dotNormalGravity = hit.normal.y * Math.sign(this.gravity)
+
+                // Compensar velocidade
                 this.velocity.sub(hit.overshoot)
 
+                // Atrito
                 const friction = Math.min(this.friction, obj.friction)
-                const gravityFrictionWeight = hit.normal.dot(0, Math.sign(this.gravity))
+                const gravityFrictionWeight = dotNormalGravity
                 if(Math.abs(this.velocity.x) > 1e-2)
                     this.velocity.x -= Math.sign(this.velocity.x) * gravityFrictionWeight * Math.min(friction, Math.abs(this.velocity.x))
+
+                // Ângulo entre vetores unitários = arccos(v1 * v2)
+                // Se o ângulo da superfície está entre -45 e 45 graus, o objeto está no chão
+                if(Math.abs(Math.acos(dotNormalGravity)) <= PI/4)
+                    this.grounded = true
             }
         }
+        debug.updateGauge('free', this.grounded)
 
         objPosition.add(this.velocity)
         this.hitbox.transformHitbox(objPosition, 1)

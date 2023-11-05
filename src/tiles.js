@@ -40,6 +40,22 @@ class Tilemap {
         }
     }
 
+    enableAllColliders() {
+        for(let i = 0; i < this.tiles.length; ++i) {
+            const tile = this.tiles[i]
+
+            tile.physics.enabled = true
+        }
+    }
+
+    disableAllColliders() {
+        for(let i = 0; i < this.tiles.length; ++i) {
+            const tile = this.tiles[i]
+
+            tile.physics.enabled = false
+        }
+    }
+
     draw() {
         for(let i = 0; i < this.tiles.length; ++i) {
             const tile = this.tiles[i]
