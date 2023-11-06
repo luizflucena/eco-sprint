@@ -2,7 +2,8 @@ var shaders = {}
 var textures = { tiles: {} }
 function preload() {
     shaders = {
-        pixelated: loadShader('shaders/pixelated.vert', 'shaders/pixelated.frag')
+        pixelated: loadShader('shaders/pixelated.vert', 'shaders/pixelated.frag'),
+        screen: loadShader('shaders/screen.vert', 'shaders/screen.frag')
     }
 
     textures.tiles = {

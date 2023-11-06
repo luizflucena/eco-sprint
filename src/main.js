@@ -17,14 +17,17 @@ function setup() {
 	debug = new DebugConsole()
 	debug.addGauge('FPS')
 	debug.addGauge('screenSize', width + ' x ' + Math.round(height))
+	debug.addGauge('mousePos')
 	debug.addGauge('free')
 	debug.addGauge('free2')
+
+	setupGui()
 
 	setupLevels()
 	setupPlayer()
 	setupCamera()
 
-	setCurrentScene(scenes.teste)
+	setCurrentScene(scenes.menu)
 }
 
 var fpsAdjustment = 1/75 // O deltaTime às vezes não deixa a animação suave
@@ -40,4 +43,12 @@ function draw() {
 	// drawPlayer()
 	// drawCamera()
 	drawCurrentScene()
+}
+
+function mouseClicked() {
+	if(currentScene === scenes.menu) {
+		setCurrentScene(scenes.teste)
+	} else {
+		setCurrentScene(scenes.menu)
+	}
 }

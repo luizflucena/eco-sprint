@@ -15,6 +15,7 @@ function setupCamera() {
 }
 
 function drawCamera() {
+	// Movimentação da câmera acompanhando o jogador
     cameraPosition.set(mainCam.eyeX, mainCam.eyeY, mainCam.eyeZ)
     Vector2.lerp(cameraPosition, player.position, /* fpsAdjustment * 10 */ 1)
     mainCam.setPosition(cameraPosition.x, cameraPosition.y, -20)

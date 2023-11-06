@@ -166,7 +166,7 @@ class Hitbox {
 class HitInfo {
     constructor() {
         this.hasHit = false // Se está colidindo ou não no momento
-        this.overshoot = Vector2.zero // Quanto o objeto atravessou a hitbox, ou passou do ponto de colisão
+        this.overshoot = Vector2.zero // Quanto o objeto atravessou a hitbox (passou do ponto de colisão)
         this.normal = Vector2.zero // Vetor normal da superfície com a qual se colidiu
     }
 }

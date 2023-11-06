@@ -1,22 +1,36 @@
 class Scene {
     constructor(name = 'cena',
-        draw = () => { debug.log('Não tem nada na cena') },
-        onStart = () => {},
-        onDisable = () => {}
+        draw = (ctx) => { debug.log('Não tem nada na cena') },
+        onStart = (ctx) => {},
+        onDisable = (ctx) => {}
     ) {
         this.name = name
 
-        this.draw = draw
-        this.onStart = onStart // Roda uma vez quando a cena é definida como a ativa
-        this.onDisable = onDisable // Roda uma vez quando a cena é desativada
+        // Devem ser definidas apenas no constructor
+        this.draw = () => { draw(this) }
+        this.onStart = () => { onStart(this) } // Roda uma vez quando a cena é definida como a ativa
+        this.onDisable = () => { onDisable(this) } // Roda uma vez quando a cena é desativada
+
+        this.variables = {}
     }
 }
 
 const scenes = {}
 
 scenes.menu = new Scene('menu',
-    () => {
-        debug.log('tela do menu')
+    (ctx) => {
+        const sceneScope = ctx.variables
+
+        drawGui(() => {
+            sceneScope.testButton.draw()
+        })
+    },
+
+    (ctx) => {
+        const sceneScope = ctx.variables
+
+        buttonMode(CENTER)
+        sceneScope.testButton = new Button(0, 0, 300, 100)
     }
 )
 
@@ -33,6 +47,7 @@ scenes.teste = new Scene('teste',
 
     () => {
         levels.teste.tilemap.disableAllColliders()
+        setupCamera()
     }
 )
 
