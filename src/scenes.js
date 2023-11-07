@@ -1,15 +1,13 @@
 class Scene {
-    constructor(name = 'cena',
-        draw = (ctx) => { debug.log('Não tem nada na cena') },
-        onStart = (ctx) => {},
-        onDisable = (ctx) => {}
+    constructor(name = 'cena', functions = {}
     ) {
         this.name = name
 
         // Devem ser definidas apenas no constructor
-        this.draw = () => { draw(this) }
-        this.onStart = () => { onStart(this) } // Roda uma vez quando a cena é definida como a ativa
-        this.onDisable = () => { onDisable(this) } // Roda uma vez quando a cena é desativada
+        this.setup = () => { if(functions.setup) functions.setup(this) }
+        this.draw = () => { if(functions.draw) functions.draw(this) }
+        this.onEnable = () => { if(functions.onEnable) functions.onEnable(this) } // Roda uma vez quando a cena é definida como a ativa
+        this.onDisable = () => { if(functions.onDisable) functions.onDisable(this) } // Roda uma vez quando a cena é desativada
 
         this.variables = {}
     }
@@ -17,39 +15,93 @@ class Scene {
 
 const scenes = {}
 
-scenes.menu = new Scene('menu',
-    (ctx) => {
+/* -------------------------------------------------------------------------- */
+
+scenes.menu = new Scene('menu', {
+    setup: (ctx) => {
+        const sceneScope = ctx.variables
+        const buttons = sceneScope.buttons = []
+
+        buttonMode(CENTER)
+
+        const jogar = new Button('Jogar', 0, -120, 400, 100, {
+            onClick: () => {
+                debug.log('jogar')
+                setCurrentScene(scenes.teste)
+            }
+        })
+        jogar.text.offsetY = -15
+        buttons.push(jogar)
+
+        const controles = new Button('Controles', 0, 0, 400, 100, {
+            onClick: () => {
+                debug.log('controles')
+            }
+        })
+        controles.text.offsetY = -10
+        buttons.push(controles)
+
+        const creditos = new Button('Créditos', 0, 120, 400, 100, {
+            onClick: () => {
+                debug.log('créditos')
+            }
+        })
+        creditos.text.offsetY = -10
+        buttons.push(creditos)
+
+        buttons.forEach((e) => e.borderRadius = 10)
+    },
+
+    draw: (ctx) => {
         const sceneScope = ctx.variables
 
         drawGui(() => {
-            sceneScope.testButton.draw()
+            for (let i = 0; i < sceneScope.buttons.length; ++i) {
+                sceneScope.buttons[i].draw()
+            }
         })
     },
 
-    (ctx) => {
+    onEnable: (ctx) => {
         const sceneScope = ctx.variables
 
-        buttonMode(CENTER)
-        sceneScope.testButton = new Button(0, 0, 300, 100)
-    }
-)
+        for (let i = 0; i < sceneScope.buttons.length; ++i) {
+            sceneScope.buttons[i].enabled = true
+        }
+    },
 
-scenes.teste = new Scene('teste',
-    () => {
+    onDisable: (ctx) => {
+        const sceneScope = ctx.variables
+
+        for (let i = 0; i < sceneScope.buttons.length; ++i) {
+            sceneScope.buttons[i].enabled = false
+        }
+    }
+})
+
+scenes.teste = new Scene('teste', {
+    draw: () => {
         levels.teste.draw()
         drawPlayer()
         drawCamera()
     },
 
-    () => {
+    onEnable: () => {
         levels.teste.tilemap.enableAllColliders()
     },
 
-    () => {
+    onDisable: () => {
         levels.teste.tilemap.disableAllColliders()
-        setupCamera()
     }
-)
+})
+
+/* -------------------------------------------------------------------------- */
+
+function setupAllScenes() {
+    for (const key in scenes) {
+        scenes[key].setup()
+    }
+}
 
 // Não deve ser alterada diretamente. Em vez disso, usar setCurrentScene()
 var currentScene
@@ -67,5 +119,5 @@ function setCurrentScene(scene) {
 
     currentScene = scene
 
-    currentScene.onStart()
+    currentScene.onEnable()
 }

@@ -26,5 +26,5 @@ function drawPlayer() {
     }
 
 	player.draw()
-    // debug.updateGauge('free', player.position.array())
+    debug.updateGauge('playerPos', player.position.array())
 }

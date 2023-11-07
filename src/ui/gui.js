@@ -4,7 +4,9 @@ function setupGui() {
     guiBuffer = createFramebuffer( { format: FLOAT } )
 }
 
-// Utilizar após todo o resto ter sido renderizado
+// Executa a função especificada no buffer da GUI e, em seguida, desenha
+// a GUI na tela, sobre todos os outros elementos. Utilizar só após todo o
+// resto já ter sido desenhado
 function drawGui(content = () => {}) {
     guiBuffer.draw(clear)
     guiBuffer.draw(content)

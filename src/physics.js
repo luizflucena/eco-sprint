@@ -1,7 +1,7 @@
 // @ts-nocheck
 const defaultGravity = 9.8
 
-var scenePhysicsObjects = []
+var allPhysicsObjects = []
 class PhysicsObject {
     constructor() {
         this.enabled = false // Se colisões envolvendo o objeto serão calculadas
@@ -15,7 +15,7 @@ class PhysicsObject {
 
         this.velocity = Vector2.zero
 
-        scenePhysicsObjects.push(this)
+        allPhysicsObjects.push(this)
     }
 
     applyForce(x, y) {
@@ -30,8 +30,8 @@ class PhysicsObject {
 
         // Testar colisões com todas as hitbox da cena
         this.grounded = false
-        for(let i = 0; i < scenePhysicsObjects.length; ++i) {
-            const obj = scenePhysicsObjects[i]
+        for(let i = 0; i < allPhysicsObjects.length; ++i) {
+            const obj = allPhysicsObjects[i]
             if(obj === this || !obj.enabled) continue;
 
             const hit = this.hitbox.testCollisionAABB(obj, this.velocity)
@@ -135,6 +135,16 @@ class Hitbox {
             hit.overshoot.x = 0
             hit.normal.set(0, -Math.sign(hit.overshoot.y))
         }
+
+        return hit
+    }
+
+    testCollisionPoint(x, y) {
+        const hit = new HitInfo()
+
+        hit.hasHit =
+            x >= this.min.x && x <= this.max.x &&
+            y >= this.min.y && y <= this.max.y
 
         return hit
     }
