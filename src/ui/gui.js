@@ -2,14 +2,31 @@
 var guiBuffer
 function setupGui() {
     guiBuffer = createFramebuffer( { format: FLOAT } )
+    guiBuffer.draw(() => {
+        ortho(
+            -width/2 * scaleProportionality,
+            width/2 * scaleProportionality,
+            -height/2 * scaleProportionality,
+            height/2 * scaleProportionality
+        )
+    })
 }
+
+// Posição do mouse no mundo do guiBuffer correspondente à sua posição no canvas
+var guiMouseX, guiMouseY
 
 // Executa a função especificada no buffer da GUI e, em seguida, desenha
 // a GUI na tela, sobre todos os outros elementos. Utilizar só após todo o
 // resto já ter sido desenhado
 function drawGui(content = () => {}) {
-    guiBuffer.draw(clear)
-    guiBuffer.draw(content)
+    guiMouseX = (mouseX - width/2) * scaleProportionality
+    guiMouseY = (mouseY - height/2) * scaleProportionality
+    debug.updateGauge('guiWorldMousePos', guiMouseX + ',' + guiMouseY)
+
+    guiBuffer.draw(() => {
+        clear()
+        content()
+    })
 
     push()
 

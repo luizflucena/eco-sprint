@@ -5,6 +5,8 @@ var cameraSmoothness = 0.8 // 0 a 1
 var cameraPosition = Vector2.zero
 
 function setupCamera() {
+	orthoScale *= scaleProportionality
+
     mainCam = createCamera()
 	// Movendo a câmera pra que o ponto (0, 0) seja o canto inferior esquerdo da tela,
 	// e para que o valor de y aumente no sentido para cima

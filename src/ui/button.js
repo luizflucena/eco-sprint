@@ -3,6 +3,21 @@ function buttonMode(mode) {
     _buttonMode = mode
 }
 
+function setupButtonListeners() {
+    canvas.elt.addEventListener('click', () => {
+        for (let i = 0; i < allButtons.length; ++i) {
+            const button = allButtons[i]
+            
+            if(button.enabled && button.mouseOver()) {
+                button.onClick()
+
+                break;
+            }
+        }
+    })
+}
+
+var allButtons = []
 class Button {
     constructor(text = '', x = 0, y = 0, width = 300, height = 100, functions = {}) {
         if(_buttonMode === 'center') {
@@ -10,10 +25,10 @@ class Button {
             y -= height/2
         }
 
-        canvas.elt.addEventListener('click', () => {
-            if(this.enabled && this.mouseOver())
-                this.onClick()
-        })
+        // canvas.elt.addEventListener('click', () => {
+        //     if(this.enabled && this.mouseOver())
+        //         this.onClick()
+        // })
 
         this.enabled = false
 
@@ -28,6 +43,7 @@ class Button {
 
         this.text = {
             text: text,
+            font: fonts.extrabold,
             size: 60,
             color: [0],
             offsetX: 0,
@@ -35,10 +51,12 @@ class Button {
         }
 
         this.hitbox = new Hitbox(x, y, x + width, y + height)
+
+        allButtons.push(this)
     }
 
     mouseOver() {
-        return this.hitbox.testCollisionPoint(mouseX - width/2, mouseY - height/2).hasHit
+        return this.hitbox.testCollisionPoint(guiMouseX, guiMouseY).hasHit
     }
 
     draw() {
@@ -53,14 +71,14 @@ class Button {
             this.onNotHover()
         }
 
+        push()
+
         rect(this.position.x, this.position.y, this.size.x, this.size.y,
             this.borderRadius, this.borderRadius, this.borderRadius, this.borderRadius)
 
-        push()
-
         rectMode(CORNER)
-        textFont(fonts.extrabold)
         textAlign(CENTER, CENTER)
+        textFont(this.text.font)
         textSize(this.text.size)
         fill(...this.text.color)
 
@@ -68,7 +86,6 @@ class Button {
 
         pop()
 
-        
         // this.hitbox.draw()
     }
 }

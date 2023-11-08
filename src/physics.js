@@ -155,7 +155,7 @@ class Hitbox {
         const max = this.max
 
         push()
-        resetMatrix()
+        // resetMatrix()
         noFill()
         stroke(0, 1, 0)
 

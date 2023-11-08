@@ -36,6 +36,7 @@ scenes.menu = new Scene('menu', {
         const controles = new Button('Controles', 0, 0, 400, 100, {
             onClick: () => {
                 debug.log('controles')
+                setCurrentScene(scenes.controles)
             }
         })
         controles.text.offsetY = -10
@@ -92,6 +93,41 @@ scenes.teste = new Scene('teste', {
 
     onDisable: () => {
         levels.teste.tilemap.disableAllColliders()
+    }
+})
+
+scenes.controles = new Scene('controles', {
+    setup: (ctx) => {
+        const sceneScope = ctx.variables
+
+        const voltar = new Button('Voltar', 0, 0, 300, 100, {
+            onClick: () => {
+                debug.log('menu')
+                setCurrentScene(scenes.menu)
+            }
+        })
+
+        sceneScope.voltar = voltar
+    },
+
+    draw: (ctx) => {
+        const sceneScope = ctx.variables
+
+        drawGui(() => {
+            sceneScope.voltar.draw()
+        })
+    },
+
+    onEnable: (ctx) => {
+        const sceneScope = ctx.variables
+
+        sceneScope.voltar.enabled = true
+    },
+
+    onDisable: (ctx) => {
+        const sceneScope = ctx.variables
+
+        sceneScope.voltar.enabled = false
     }
 })
 
