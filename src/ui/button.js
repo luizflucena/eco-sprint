@@ -34,7 +34,7 @@ class Button {
 
         this.position = Vector2.create(x, y)
         this.size = Vector2.create(width, height)
-        this.borderRadius = 0
+        this.borderRadius = 10
 
         this.onClick = () => { if(functions.onClick) functions.onClick(this) }
         this.mouseIsPressed = () => { if(functions.mouseIsPressed) functions.mouseIsPressed(this) }
@@ -72,11 +72,11 @@ class Button {
         }
 
         push()
-
+        rectMode(CORNER)
+        
         rect(this.position.x, this.position.y, this.size.x, this.size.y,
             this.borderRadius, this.borderRadius, this.borderRadius, this.borderRadius)
-
-        rectMode(CORNER)
+            
         textAlign(CENTER, CENTER)
         textFont(this.text.font)
         textSize(this.text.size)

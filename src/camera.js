@@ -1,5 +1,5 @@
 var mainCam
-var orthoScale = 2
+var orthoScale = 10
 var cameraSmoothness = 0.8 // 0 a 1
 
 var cameraPosition = Vector2.zero

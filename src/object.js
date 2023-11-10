@@ -8,7 +8,7 @@ class GameObject {
 
         this.sprite = new Sprite(0, 0, 100, 100, 'none')
 
-        this.physics = new PhysicsObject()
+        this.physics = new PhysicsObject(this)
         // Inicializar a hitbox com a mesma posição e escala iniciais do objeto
         this.physics.hitbox.transformHitbox(this.position, this.scale)
     }
