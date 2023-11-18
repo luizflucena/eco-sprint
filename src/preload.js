@@ -2,15 +2,23 @@ var shaders = {}
 var textures = { tiles: {} }
 var fonts = { extrabold: undefined }
 function preload() {
-    shaders = {
-        pixelated: loadShader('shaders/pixelated.vert', 'shaders/pixelated.frag'),
-        screen: loadShader('shaders/screen.vert', 'shaders/screen.frag')
-    }
+    loadAndDefineShader('pixelated')
+    loadAndDefineShader('screen')
 
-    textures.tiles = {
-        sand: loadImage('assets/tiles/sand.png'),
-        teste: loadImage('assets/tiles/teste.png')
-    }
+    loadAndDefineImage('tiles/sand.png')
+    loadAndDefineImage('tiles/teste.png')
 
     fonts.extrabold = loadFont('fonts/OpenSans-ExtraBold.ttf')
+}
+
+function loadAndDefineImage(path) {
+    const splitPath = path.split('/')
+    const name = splitPath[splitPath.length - 1].split('.')[0]
+    const obj = splitPath.length === 1 ? textures : textures[splitPath[0]]
+
+    obj[name] = loadImage('assets/textures/' + path)
+}
+
+function loadAndDefineShader(name) {
+    shaders[name] = loadShader('shaders/' + name + '.vert', 'shaders/' + name + '.frag')
 }

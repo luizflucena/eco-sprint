@@ -3,15 +3,15 @@
 /* -------------------------------------------------------------------------- */
 
 const baseWidth = 1280, baseHeight = 720
-// Para manter o tamanho dos objetos no canvas consistente, independente
-// da resolução, de acordo com seu tamanho em um canvas 1280x720
-var scaleProportionality, inverseScaleProportionality
+// Para manter o tamanho relativo dos objetos no canvas consistente,
+// independente da resolução
+var scaleProportionality, invScaleProportionality
 var canvas
 function setup() {
 	const largura = windowWidth > 1280 ? 1280 : windowWidth
 	const altura = largura * baseHeight/baseWidth
 	scaleProportionality = baseHeight/altura
-	inverseScaleProportionality = 1/scaleProportionality
+	invScaleProportionality = 1/scaleProportionality
 
 	frameRate(300)
 	canvas = createCanvas(largura, altura, WEBGL)
@@ -19,21 +19,22 @@ function setup() {
 	colorMode(RGB, 1)
 	noStroke()
 	textFont(fonts.extrabold)
+	rectMode(CENTER)
 
-	allSprites.autoDraw = false
+	// allSprites.autoDraw = false
 
 	debug = new DebugConsole()
 	debug.addGauge('FPS')
 	debug.addGauge('projectedFPS')
 	debug.addGauge('screenSize', width + ' x ' + Math.round(height))
-	debug.addGauge('playerVelocity')
+	// debug.addGauge('playerVelocity')
+	debug.addGauge('playerPos')
 	debug.addGauge('free')
 	debug.addGauge('free2')
 
 	setupGui()
 	setupButtonListeners()
 
-	setupLevels()
 	setupPlayer()
 	setupCamera()
 
@@ -41,14 +42,21 @@ function setup() {
 	setCurrentScene(scenes.teste) // Definir a cena inicial
 }
 
-var fpsAdjustment = 1/75 // O deltaTime às vezes não deixa a animação suave
+var fpsAdjustment
 
 function draw() {
-	const fps = avgFPS(75)
-	fpsAdjustment = fps <= 0 ? fpsAdjustment : 1/Math.round(fps)
+	const performanceTimerStart = performance.now()
+
+	const fps = debug.avgOverTime(frameRate(), 75, 'fps')
+	fpsAdjustment = deltaTime * 1e-3
+	// debug.updateGauge('FPS', fps.toFixed(2))
 	debug.updateGauge('FPS', fps.toFixed(2))
 
-	background(0.7)
+	background(128/255, 206/255, 237/255)
 
 	drawCurrentScene()
+
+	const performanceTimerEnd = performance.now()
+	const frameDrawTime = performanceTimerEnd - performanceTimerStart
+	debug.updateGauge('projectedFPS', debug.avgOverTime(1000/frameDrawTime, 75, 'prfps').toFixed(2))
 }

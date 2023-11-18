@@ -6,7 +6,7 @@ class GameObject {
         this.position = position
         this.scale = scale
 
-        this.sprite = new Sprite(0, 0, 100, 100, 'none')
+        // this.sprite = new Sprite(0, 0, 100, 100, 'none')
 
         this.physics = new PhysicsObject(this)
         // Inicializar a hitbox com a mesma posição e escala iniciais do objeto
@@ -18,7 +18,8 @@ class GameObject {
         
         translate(this.position)
         scale(this.scale)
-        this.sprite.draw()
+        // this.sprite.draw()
+        square(0, 0, 100)
         
         pop()
         

@@ -21,7 +21,6 @@ var guiMouseX, guiMouseY
 function drawGui(content = () => {}) {
     guiMouseX = (mouseX - width/2) * scaleProportionality
     guiMouseY = (mouseY - height/2) * scaleProportionality
-    debug.updateGauge('guiWorldMousePos', guiMouseX + ',' + guiMouseY)
 
     guiBuffer.draw(() => {
         clear()

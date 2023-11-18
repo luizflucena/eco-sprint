@@ -85,6 +85,12 @@ scenes.teste = new Scene('teste', {
     setup: (ctx) => {
         const sceneScope = ctx.variables
 
+        const groundTilemap = new Tilemap()
+        groundTilemap.tileLineFill(-10, 66, 0, -5, -6, textures.tiles.sand)
+        groundTilemap.tileLineFill(67, 100, -5, -5, -6, textures.tiles.sand)
+        groundTilemap.addTile(20, -1, textures.tiles.teste)
+        sceneScope.groundTilemap = groundTilemap
+
         const inimigo1 = new Enemy(Vector2.create(500, 200))
         // inimigo1.physics.enabled = true
         // inimigo1.physics.dynamic = true
@@ -96,14 +102,25 @@ scenes.teste = new Scene('teste', {
         // lixo1.physics.trigger = true
         lixo1.physics.setCollisionCallback((ctx) => {
             ctx.enabled = false
+            sceneScope.trashCount += 1
         })
         sceneScope.lixo1 = lixo1
+
+        const lowerLevelLimit = new PhysicsObject()
+        lowerLevelLimit.enabled = true
+        lowerLevelLimit.trigger = true
+        lowerLevelLimit.hitbox.set(-1e5, -1e5, 1e5, -3000)
+        lowerLevelLimit.setCollisionCallback(() => {
+            player.position.set(300, 100)
+            player.physics.velocity.set(0, 0)
+        })
+        sceneScope.lowerLevelLimit = lowerLevelLimit
     },
 
     draw: (ctx) => {
         const sceneScope = ctx.variables
 
-        levels.teste.draw()
+        sceneScope.groundTilemap.draw()
         drawPlayer()
         if(sceneScope.lixo1.physics.enabled)
             sceneScope.lixo1.draw()
@@ -113,16 +130,23 @@ scenes.teste = new Scene('teste', {
             rectMode(CENTER)
             textAlign(LEFT, TOP)
             textSize(50)
-            text(Math.round(player.position.x * 1e-2) + ' pontos', -baseWidth/2 + 10, -baseHeight/2)
+            text(sceneScope.trashCount + (sceneScope.trashCount === 1 ? ' lixo coletado' : ' lixos coletados'),
+                -baseWidth/2 + 10, -baseHeight/2)
         })
     },
 
-    onEnable: () => {
-        levels.teste.tilemap.enableAllColliders()
+    onEnable: (ctx) => {
+        const sceneScope = ctx.variables
+
+        sceneScope.trashCount = 0
+
+        sceneScope.groundTilemap.enableAllColliders()
     },
 
-    onDisable: () => {
-        levels.teste.tilemap.disableAllColliders()
+    onDisable: (ctx) => {
+        const sceneScope = ctx.variables
+
+        sceneScope.groundTilemap.disableAllColliders()
     }
 })
 

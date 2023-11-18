@@ -22,6 +22,7 @@ class PhysicsObject {
         this.horizontalDrag = 0
 
         this.velocity = Vector2.zero
+        this._velocityCorrection = Vector2.zero
 
         allPhysicsObjects.push(this)
     }
@@ -64,9 +65,8 @@ class PhysicsObject {
 
                 // Atrito
                 const friction = Math.min(this.friction, obj.friction)
-                const gravityFrictionWeight = normalDotGravity
                 if(Math.abs(this.velocity.x) > minVelocity)
-                    this.velocity.x -= Math.sign(this.velocity.x) * gravityFrictionWeight * Math.min(friction, Math.abs(this.velocity.x))
+                    this.velocity.x -= Math.sign(this.velocity.x) * normalDotGravity * Math.min(friction, Math.abs(this.velocity.x))
 
                 // Ângulo entre vetores unitários = arccos(v1 . v2)
                 // Se o ângulo da superfície está entre -45 e 45 graus, o objeto está no chão
@@ -75,7 +75,7 @@ class PhysicsObject {
             }
         }
 
-        if(Math.abs(this.velocity.x) < minVelocity) this.velocity.x = 0
+        // if(Math.abs(this.velocity.x) < minVelocity) this.velocity.x = 0
         if(Math.abs(this.velocity.y) < minVelocity) this.velocity.y = 0
 
         objPosition.add(this.velocity)

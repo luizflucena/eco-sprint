@@ -39,18 +39,23 @@ class DebugConsole {
 
         gauge.html(label + ':<br>' + value)
     }
+
+    avgOverTime(value, frameInterval, identifier) {
+        if(!this.hasOwnProperty(identifier)) {
+            this[identifier] = { sum: 0, result: 0 }
+        }
+
+        const obj = this[identifier]
+
+        obj.sum += value === Infinity ? 0 : value
+
+        if(frameCount % frameInterval === 0) {
+            obj.result = obj.sum / frameInterval
+            obj.sum = 0
+        }
+
+        return obj.result
+    }
 }
 
 var debug
-
-var fpsSum = 0, fps = 0
-function avgFPS(frameInterval) {
-    fpsSum += frameRate() === Infinity ? 0 : frameRate()
-
-    if(frameCount % frameInterval === 0) {
-        fps = fpsSum / frameInterval
-        fpsSum = 0
-    }
-
-    return fps
-}
