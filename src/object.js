@@ -6,7 +6,8 @@ class GameObject {
         this.position = position
         this.scale = scale
 
-        // this.sprite = new Sprite(0, 0, 100, 100, 'none')
+        this.sprite = undefined
+        this.spriteResolution = 16
 
         this.physics = new PhysicsObject(this)
         // Inicializar a hitbox com a mesma posição e escala iniciais do objeto
@@ -18,7 +19,13 @@ class GameObject {
         
         translate(this.position)
         scale(this.scale)
-        // this.sprite.draw()
+        if(this.sprite !== undefined) {
+            const img = this.sprite instanceof GameAnimation ? this.sprite.currentImage : this.sprite
+
+            shader(shaders.pixelated)
+            shaders.pixelated.setUniform('uTexture', img)
+            shaders.pixelated.setUniform('uSpriteRes', this.spriteResolution)
+        }
         square(0, 0, 100)
         
         pop()

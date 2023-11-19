@@ -88,7 +88,6 @@ scenes.teste = new Scene('teste', {
         const groundTilemap = new Tilemap()
         groundTilemap.tileLineFill(-10, 66, 0, -5, -6, textures.tiles.sand)
         groundTilemap.tileLineFill(67, 100, -5, -5, -6, textures.tiles.sand)
-        groundTilemap.addTile(20, -1, textures.tiles.teste)
         sceneScope.groundTilemap = groundTilemap
 
         const inimigo1 = new Enemy(Vector2.create(500, 200))

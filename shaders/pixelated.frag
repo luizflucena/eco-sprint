@@ -7,13 +7,14 @@ void pixelateUV(inout vec2 uv, float res) {
 }
 
 uniform sampler2D uTexture;
+uniform float uSpriteRes;
 
 varying vec4 vPos;
 varying vec2 vTexCoord;
 
 void main() {
     vec2 uv = vTexCoord;
-    pixelateUV(uv, 16.0);
+    pixelateUV(uv, uSpriteRes);
 
     gl_FragColor = texture2D(uTexture, uv);
 }

@@ -1,4 +1,5 @@
 const tileSize = 100
+const tileRes = 16
 
 class Tile {
     constructor(x, y, texture = textures.tiles.sand) {
@@ -135,14 +136,15 @@ class Tilemap {
         push()
         rectMode(CENTER)
         shader(shaders.pixelated)
+        shaders.pixelated.setUniform('uSpriteRes', tileRes)
 
         for(let i = 0; i < this.tiles.length; ++i) {
             this.tiles[i].draw()
         }
 
-        for(let i = 0; i < this.colliders.length; ++i) {
-            this.colliders[i].hitbox.draw()
-        }
+        // for(let i = 0; i < this.colliders.length; ++i) {
+        //     this.colliders[i].hitbox.draw()
+        // }
 
         pop()
     }
