@@ -12,7 +12,7 @@ function preload() {
         sliceSpriteSheet('player', img, 4, 23)
     })
 
-    fonts.extrabold = loadFont('fonts/OpenSans-ExtraBold.ttf')
+    fonts.extrabold = loadFont('assets/fonts/OpenSans-ExtraBold.ttf')
 }
 
 function loadAndDefineImage(path, successCallback = () => {}) {
@@ -24,5 +24,5 @@ function loadAndDefineImage(path, successCallback = () => {}) {
 }
 
 function loadAndDefineShader(name) {
-    shaders[name] = loadShader('shaders/' + name + '.vert', 'shaders/' + name + '.frag')
+    shaders[name] = loadShader('assets/shaders/' + name + '.vert', 'assets/shaders/' + name + '.frag')
 }
