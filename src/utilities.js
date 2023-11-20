@@ -21,10 +21,6 @@ function clamp(value, min, max) {
     return Math.max(Math.min(value, max), min)
 }
 
-function map(value, min1, max1, min2, max2) {
-    return min2 + (value - min1) * (max2 - min2) / (max1 - min1)
-}
-
 // Retorna o número, ainda com o sinal, de menor módulo
 function minAbs(a, b, c) {
     if(arguments.length === 2) {

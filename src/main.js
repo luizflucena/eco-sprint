@@ -27,7 +27,7 @@ function setup() {
 	debug.addGauge('FPS')
 	debug.addGauge('projectedFPS')
 	debug.addGauge('screenSize', width + ' x ' + Math.round(height))
-	// debug.addGauge('playerVelocity')
+	debug.addGauge('playerVelocity')
 	debug.addGauge('playerPos')
 	debug.addGauge('free')
 	debug.addGauge('free2')

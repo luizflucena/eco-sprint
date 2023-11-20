@@ -75,7 +75,7 @@ class PhysicsObject {
             }
         }
 
-        // if(Math.abs(this.velocity.x) < minVelocity) this.velocity.x = 0
+        if(Math.abs(this.velocity.x) < minVelocity) this.velocity.x = 0
         if(Math.abs(this.velocity.y) < minVelocity) this.velocity.y = 0
 
         objPosition.add(this.velocity)

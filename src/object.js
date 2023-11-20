@@ -3,28 +3,57 @@ class GameObject {
         position = Vector2.zero,
         scale = Vector2.one
     ) {
+        this.enabled = true
+
         this.position = position
         this.scale = scale
 
         this.sprite = undefined
-        this.spriteResolution = 16
+        this.animation = undefined
 
         this.physics = new PhysicsObject(this)
         // Inicializar a hitbox com a mesma posição e escala iniciais do objeto
         this.physics.hitbox.transformHitbox(this.position, this.scale)
     }
 
+    disable() {
+        this.enabled = false
+        this.physics.enabled = false
+    }
+
+    // Opções:
+    // Definir o frame atual da nova animação como o mesmo da animação fornecida
+    // { setFrame: number }
+    changeAnimation(newAnimation, options = {}) {
+        if(this.animation === newAnimation) return;
+
+        if(options.setFrame)
+            newAnimation.setAnimationFrame(options.setFrame)
+        else
+            newAnimation.setAnimationFrame(0)
+
+        this.animation = newAnimation
+    }
+
+    removeAnimation() {
+        this.animation = undefined
+    }
+
     draw() {
+        if(!this.enabled) return;
+
         push()
         
         translate(this.position)
         scale(this.scale)
-        if(this.sprite !== undefined) {
-            const img = this.sprite instanceof GameAnimation ? this.sprite.currentImage : this.sprite
-
+        if(this.animation !== undefined) {
             shader(shaders.pixelated)
-            shaders.pixelated.setUniform('uTexture', img)
-            shaders.pixelated.setUniform('uSpriteRes', this.spriteResolution)
+            shaders.pixelated.setUniform('uTexture', this.animation.currentSprite)
+            shaders.pixelated.setUniform('uSpriteRes', this.animation.spriteResolution)
+        } else if(this.sprite !== undefined) {
+            shader(shaders.pixelated)
+            shaders.pixelated.setUniform('uTexture', this.sprite)
+            shaders.pixelated.setUniform('uSpriteRes', this.sprite.width)
         }
         square(0, 0, 100)
         

@@ -6,9 +6,6 @@ class Tile {
         this.position = Vector2.create(x, y)
         this.worldPosition = Vector2.create(x * tileSize, y * tileSize)
         this.texture = texture
-
-        // this.physics = new PhysicsObject()
-        // this.physics.hitbox.transformHitbox(this.worldPosition, 1)
     }
 
     draw() {
@@ -55,18 +52,6 @@ class Tilemap {
         this.tiles.push(tile)
     }
 
-    // tileAreaFill(x1, x2, y1, y2, texture) {
-    //     for(let x = x1; x <= x2; ++x) {
-    //         for(let y = y1; y <= y2; ++y) {
-    //             this.addTile(x, y, texture)
-    //         }
-    //     }
-
-    //     const physics = new PhysicsObject(this)
-    //     physics.hitbox.set(x1, y1, x2, y2)
-    //     this.colliders.push(physics)
-    // }
-
     // fonte: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
     tileLineFill(x1, x2, y1, y2, thickness, texture) {
         const yOffset = y1 > y2 ? -1 : 1
@@ -84,13 +69,11 @@ class Tilemap {
                 minY = y*tileSize + 50
                 maxY = (y + thickness)*tileSize + 50
                 maxX = x*tileSize - 50
-
                 if(minY > maxY) {
                     const aux = minY
                     minY = maxY
                     maxY = aux
                 }
-
                 this.addHitbox(minX, minY, maxX, maxY)
                 minX = maxX
 
