@@ -32,6 +32,8 @@ function setup() {
 	debug.addGauge('free')
 	debug.addGauge('free2')
 
+	setupSound()
+
 	setupGui()
 	setupButtonListeners()
 
@@ -39,11 +41,10 @@ function setup() {
 	setupCamera()
 
 	setupAllScenes()
-	setCurrentScene(scenes.teste) // Definir a cena inicial
+	setCurrentScene(scenes.menu) // Definir a cena inicial
 }
 
 var fpsAdjustment
-
 function draw() {
 	const performanceTimerStart = performance.now()
 

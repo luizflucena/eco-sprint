@@ -27,6 +27,7 @@ scenes.menu = new Scene('menu', {
         const jogar = new Button('Jogar', 0, -120, 400, 100, {
             onClick: () => {
                 debug.log('jogar')
+                sounds.sfx.start.play()
                 setCurrentScene(scenes.teste)
             }
         })
@@ -95,14 +96,7 @@ scenes.teste = new Scene('teste', {
         // inimigo1.physics.dynamic = true
         sceneScope.inimigo1 = inimigo1
 
-        const lixo1 = new Trash(Vector2.create(500, 200))
-        lixo1.physics.enabled = true
-        lixo1.physics.dynamic = true
-        // lixo1.physics.trigger = true
-        lixo1.physics.setCollisionCallback((ctx) => {
-            ctx.enabled = false
-            sceneScope.trashCount += 1
-        })
+        const lixo1 = new Trash(500, 200, () => { ++sceneScope.trashCount })
         sceneScope.lixo1 = lixo1
 
         const lowerLevelLimit = new PhysicsObject()
@@ -120,9 +114,8 @@ scenes.teste = new Scene('teste', {
         const sceneScope = ctx.variables
 
         sceneScope.groundTilemap.draw()
+        sceneScope.lixo1.draw()
         drawPlayer()
-        if(sceneScope.lixo1.physics.enabled)
-            sceneScope.lixo1.draw()
 
         drawCamera()
         drawGui(() => {
@@ -140,6 +133,9 @@ scenes.teste = new Scene('teste', {
         sceneScope.trashCount = 0
 
         sceneScope.groundTilemap.enableAllColliders()
+
+        sounds.sfx.ocean.play()
+        sounds.music.wanko05.play(4)
     },
 
     onDisable: (ctx) => {

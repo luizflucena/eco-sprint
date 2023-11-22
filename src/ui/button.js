@@ -41,6 +41,8 @@ class Button {
         this.onHover = () => { if(functions.onHover) functions.onHover(this) }
         this.onNotHover = () => { if(functions.onNotHover) functions.onNotHover(this) }
 
+        this.color = [1]
+
         this.text = {
             text: text,
             font: fonts.extrabold,
@@ -74,6 +76,7 @@ class Button {
         push()
         rectMode(CORNER)
         
+        fill(...this.color)
         rect(this.position.x, this.position.y, this.size.x, this.size.y,
             this.borderRadius, this.borderRadius, this.borderRadius, this.borderRadius)
             

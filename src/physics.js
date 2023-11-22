@@ -4,9 +4,10 @@ const minVelocity = 1e-2 // Velocidades abaixo disso são arredondadas pra 0
 
 var allPhysicsObjects = []
 class PhysicsObject {
-    constructor(parentObject) {
+    constructor(parentObject, tag = '') {
         this.parentObject = parentObject
-        this.excluded = []
+        this.tag = tag
+        this.ignoredTags = []
 
         this.enabled = false // Se colisões envolvendo o objeto serão calculadas
         this.dynamic = false // Se o objeto deve ser afetado pela física ou permanecer estático
@@ -36,6 +37,17 @@ class PhysicsObject {
         this.velocity.y += y
     }
 
+    ignoreTag(tag) {
+        this.ignoredTags.push(tag)
+    }
+
+    isTagIgnored(tag) {
+        for(let i = 0; i < this.ignoredTags.length; ++i)
+            if(tag === this.ignoredTags[i]) return true;
+
+        return false
+    }
+
     updatePosition(objPosition) {
         if(!this.enabled || !this.dynamic || this.trigger) return
 
@@ -56,7 +68,7 @@ class PhysicsObject {
             const hit = this.hitbox.testCollisionAABB(obj, this.velocity)
             if(hit.hasHit) {
                 obj._onCollision()
-                if(obj.trigger) continue;
+                if(obj.trigger || this.isTagIgnored(obj.tag)) continue;
 
                 const normalDotGravity = hit.normal.y * Math.sign(this.gravity)
 

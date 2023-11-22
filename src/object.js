@@ -21,6 +21,11 @@ class GameObject {
         this.physics.enabled = false
     }
 
+    enable() {
+        this.enabled = true
+        this.physics.enabled = true
+    }
+
     // Opções:
     // Definir o frame atual da nova animação como o mesmo da animação fornecida
     // { setFrame: number }

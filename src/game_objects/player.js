@@ -2,6 +2,9 @@ class Player extends GameObject {
     constructor(position = Vector2.zero, scale = Vector2.one) {
         super(position, scale)
 
+        this.physics.tag = 'player'
+        this.physics.ignoreTag('trash')
+
         this.maxVelocity = 10
         this.animations = { walk: undefined, run: undefined, idle: undefined }
         this.directionX = 1
@@ -22,7 +25,12 @@ class Player extends GameObject {
     }
 
     jump() {
-        if(this.physics.grounded) this.physics.velocity.y = 13
+        if(this.physics.grounded) {
+            this.physics.velocity.y = 13
+
+            if(!sounds.sfx.jump.isPlaying())
+                sounds.sfx.jump.play()
+        }
     }
 }
 
@@ -72,13 +80,20 @@ function drawPlayer() {
 
     // player.physics.hitbox.draw()
     player.draw()
+    debug.updateGauge('free', player.animation !== undefined ? player.animation.currentAnimationFrame : -1)
 
     if(player.physics.velocity.x !== 0)
         if(Math.abs(player.physics.velocity.x) < 8.8) {
-            player.changeAnimation(player.animations.walk, { setFrame: player.animations.run.currentAnimationFrame + 1 })
+            player.changeAnimation(player.animations.walk, {
+                setFrame: player.animation === player.animations.run ?
+                    player.animations.run.currentAnimationFrame + 1 : undefined
+            })
         }
         else {
-            player.changeAnimation(player.animations.run, { setFrame: player.animations.walk.currentAnimationFrame + 1 })
+            player.changeAnimation(player.animations.run, {
+                setFrame: player.animation === player.animations.walk ?
+                    player.animations.walk.currentAnimationFrame + 1 : undefined
+            })
         }
     else
         player.removeAnimation()
