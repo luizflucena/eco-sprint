@@ -31,7 +31,6 @@ scenes.menu = new Scene('menu', {
                 setCurrentScene(scenes.teste)
             }
         })
-        jogar.text.offsetY = -15
         buttons.push(jogar)
 
         const controles = new Button('Controles', 0, 0, 400, 100, {
@@ -40,7 +39,6 @@ scenes.menu = new Scene('menu', {
                 setCurrentScene(scenes.controles)
             }
         })
-        controles.text.offsetY = -10
         buttons.push(controles)
 
         const creditos = new Button('Créditos', 0, 120, 400, 100, {
@@ -49,18 +47,34 @@ scenes.menu = new Scene('menu', {
                 setCurrentScene(scenes.creditos)
             }
         })
-        creditos.text.offsetY = -10
         buttons.push(creditos)
 
-        // buttons.forEach((e) => e.borderRadius = 10)
+        buttons.forEach((b) => {
+            b.text.offsetY = -7
+            b.position.y += 115
+            b.updateHitbox()
+        })
     },
 
     draw: (ctx) => {
         const sceneScope = ctx.variables
 
         drawGui(() => {
+            push()
+
+            rectMode(CENTER)
+            rect(0, -baseHeight/2 + 110, 550, 310, 0, 0, 25, 25)
+
+            imageMode(CENTER)
+            translate(0, -220)
+            scale(0.7)
+            image(textures.logo, 0, 0)
+
+            pop()
+
             for (let i = 0; i < sceneScope.buttons.length; ++i) {
                 sceneScope.buttons[i].draw()
+                // sceneScope.buttons[i].hitbox.draw()
             }
         })
     },
@@ -87,17 +101,29 @@ scenes.teste = new Scene('teste', {
         const sceneScope = ctx.variables
 
         const groundTilemap = new Tilemap()
-        groundTilemap.tileLineFill(-10, 66, 0, -5, -6, textures.tiles.sand)
-        groundTilemap.tileLineFill(67, 100, -5, -5, -6, textures.tiles.sand)
+        groundTilemap.tileLineFill(-10, 66, 0, -5, -8, textures.tiles.sand)
+        groundTilemap.tileLineFill(67, 100, -5, -5, -8, textures.tiles.sand)
+
+        groundTilemap.tileLineFill(21, 26, -1, -1, -2, textures.tiles.sand)
+        groundTilemap.tileLineFill(31, 53, 1, 3, -2, textures.tiles.sand)
+
+        groundTilemap.tileLineFill(78, 92, 4, 1, -3, textures.tiles.sand)
+        groundTilemap.tileLineFill(78, 85, 4, -3, -3, textures.tiles.sand)
+        groundTilemap.tileLineFill(81, 92, 1, -2, -4, textures.tiles.sand)
+        groundTilemap.tileLineFill(93, 101, 2, -3, -6, textures.tiles.sand)
+
+        groundTilemap.tileLineFill(101, 150, -5, -10, -8, textures.tiles.sand)
+        groundTilemap.tileLineFill(151, 200, -10, -10, -8, textures.tiles.sand)
         sceneScope.groundTilemap = groundTilemap
 
-        const inimigo1 = new Enemy(Vector2.create(500, 200))
-        // inimigo1.physics.enabled = true
-        // inimigo1.physics.dynamic = true
-        sceneScope.inimigo1 = inimigo1
+        const umbrellas = sceneScope.umbrellas = []
+        umbrellas.push(new Umbrella(61, -4))
+        umbrellas.push(new Umbrella(72, -4))
 
-        const lixo1 = new Trash(500, 200, () => { ++sceneScope.trashCount })
-        sceneScope.lixo1 = lixo1
+        const trash = sceneScope.trash = []
+        trash.push(new Trash(5, 2, () => { ++sceneScope.trashCount }))
+
+        const levelEnd = sceneScope.levelEnd = new TrashBin(155, -9)
 
         const lowerLevelLimit = new PhysicsObject()
         lowerLevelLimit.enabled = true
@@ -114,7 +140,14 @@ scenes.teste = new Scene('teste', {
         const sceneScope = ctx.variables
 
         sceneScope.groundTilemap.draw()
-        sceneScope.lixo1.draw()
+        for(let i = 0; i < sceneScope.trash.length; ++i) {
+            sceneScope.trash[i].draw()
+        }
+        for(let i = 0; i < sceneScope.umbrellas.length; ++i) {
+            sceneScope.umbrellas[i].draw()
+        }
+        sceneScope.levelEnd.draw()
+        sceneScope.levelEnd.physics.hitbox.draw()
         drawPlayer()
 
         drawCamera()
@@ -157,7 +190,7 @@ scenes.controles = new Scene('controles', {
                 setCurrentScene(scenes.menu)
             }
         })
-        voltar.text.offsetY = -8
+        voltar.text.offsetY = -7
 
         sceneScope.voltar = voltar
     },
@@ -195,7 +228,7 @@ scenes.creditos = new Scene('creditos', {
                 setCurrentScene(scenes.menu)
             }
         })
-        voltar.text.offsetY = -8
+        voltar.text.offsetY = -7
 
         sceneScope.voltar = voltar
     },
@@ -204,6 +237,35 @@ scenes.creditos = new Scene('creditos', {
         const sceneScope = ctx.variables
 
         drawGui(() => {
+            imageMode(CENTER)
+            image(textures.bg.menu_bg, 0, 0, baseWidth, baseHeight)
+            textAlign(CENTER, CENTER)
+
+            const y = 70
+
+            textFont(fonts.extrabold)
+            textSize(65)
+            text('Criadores', 0, -270 + y)
+
+            textFont(fonts.regular)
+            textSize(45)
+            text('Luiz Felipe de Lucena Lima', 0, -200 + y)
+            textSize(26)
+            text('luizfl.lucenalima@gmail.com', 0, -160 + y)
+            textSize(45)
+            text('Ana Carolina França Nunes', 0, -110 + y)
+            textSize(26)
+            text('carolfn14@gmail.com', 0, -70 + y)
+
+
+            textFont(fonts.extrabold)
+            textSize(65)
+            text('Professor', 0, 40 + y)
+
+            textFont(fonts.regular)
+            textSize(45)
+            text('Thales Aguiar de Lima', 0, 110 + y)
+
             sceneScope.voltar.draw()
         })
     },

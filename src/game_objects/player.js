@@ -5,20 +5,21 @@ class Player extends GameObject {
         this.physics.tag = 'player'
         this.physics.ignoreTag('trash')
 
-        this.maxVelocity = 10
+        this.maxVelocity = 15
+        this.acceleration = 60
         this.animations = { walk: undefined, run: undefined, idle: undefined }
         this.directionX = 1
     }
 
     walkLeft() {
-        player.physics.applyForce(-50 * fpsAdjustment, 0)
+        player.physics.applyForce(-this.acceleration * fpsAdjustment, 0)
 
         if(player.physics.velocity.x < -player.maxVelocity)
             player.physics.velocity.x = -player.maxVelocity
     }
 
     walkRight() {
-        player.physics.applyForce(50 * fpsAdjustment, 0)
+        player.physics.applyForce(this.acceleration * fpsAdjustment, 0)
 
         if(player.physics.velocity.x > player.maxVelocity)
             player.physics.velocity.x = player.maxVelocity
@@ -26,7 +27,7 @@ class Player extends GameObject {
 
     jump() {
         if(this.physics.grounded) {
-            this.physics.velocity.y = 13
+            this.physics.velocity.y = 20
 
             if(!sounds.sfx.jump.isPlaying())
                 sounds.sfx.jump.play()
@@ -34,14 +35,14 @@ class Player extends GameObject {
     }
 }
 
-var player = new Player(Vector2.create(300, 100))
+var player = new Player(Vector2.create(0, 200))
 
 function setupPlayer() {
     player.physics.enabled = true
     player.physics.dynamic = true
-    player.physics.friction = 0.25
-    player.physics.hitbox.localMin.add(25, 0)
-    player.physics.hitbox.localMax.sub(25, 20)
+    player.physics.friction = 0.3
+    player.physics.hitbox.localMin.sub(0, 50)
+    player.scale.set(2, 2)
 
     player.animations.walk = new GameAnimation(spriteSheets.player, 10,
         spriteSheets.player.getSpriteIndex(0, 2),
@@ -70,9 +71,9 @@ function drawPlayer() {
     }
 
     if(player.physics.velocity.y < 0) {
-        player.physics.gravity = 1.5 * defaultGravity
+        player.physics.gravity = 3 * defaultGravity
     } else {
-        player.physics.gravity = defaultGravity
+        player.physics.gravity = 1.5 * defaultGravity
     }
 
     if(Math.sign(player.scale.x) !== player.directionX)
@@ -83,7 +84,7 @@ function drawPlayer() {
     debug.updateGauge('free', player.animation !== undefined ? player.animation.currentAnimationFrame : -1)
 
     if(player.physics.velocity.x !== 0)
-        if(Math.abs(player.physics.velocity.x) < 8.8) {
+        if(Math.abs(player.physics.velocity.x) < player.maxVelocity - 1) {
             player.changeAnimation(player.animations.walk, {
                 setFrame: player.animation === player.animations.run ?
                     player.animations.run.currentAnimationFrame + 1 : undefined
@@ -98,6 +99,6 @@ function drawPlayer() {
     else
         player.removeAnimation()
 
-    debug.updateGauge('playerVelocity', player.physics.velocity.x)
-    debug.updateGauge('playerPos', player.position.x)
+    debug.updateGauge('playerVelocity', Math.round(player.physics.velocity.x) + ', ' + Math.round(player.physics.velocity.y))
+    debug.updateGauge('playerPos', Math.floor(player.position.x/100) + ', ' + Math.floor(player.position.y/100))
 }

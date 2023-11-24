@@ -29,7 +29,7 @@ class PhysicsObject {
     }
 
     setCollisionCallback(action) {
-        this._onCollision = () => { action(this, this.parentObject) }
+        this._onCollision = action // action(physicsObject, parentObject, HitInfo)
     }
 
     applyForce(x, y) {
@@ -67,7 +67,7 @@ class PhysicsObject {
 
             const hit = this.hitbox.testCollisionAABB(obj, this.velocity)
             if(hit.hasHit) {
-                obj._onCollision()
+                obj._onCollision(this, this.parentObject, hit)
                 if(obj.trigger || this.isTagIgnored(obj.tag)) continue;
 
                 const normalDotGravity = hit.normal.y * Math.sign(this.gravity)

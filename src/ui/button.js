@@ -25,18 +25,15 @@ class Button {
             y -= height/2
         }
 
-        // canvas.elt.addEventListener('click', () => {
-        //     if(this.enabled && this.mouseOver())
-        //         this.onClick()
-        // })
-
         this.enabled = false
 
         this.position = Vector2.create(x, y)
         this.size = Vector2.create(width, height)
         this.borderRadius = 10
 
-        this.onClick = () => { if(functions.onClick) functions.onClick(this) }
+        const playClickSound = () => { sounds.sfx.click.play() }
+
+        this.onClick = () => { if(functions.onClick) functions.onClick(this); playClickSound() }
         this.mouseIsPressed = () => { if(functions.mouseIsPressed) functions.mouseIsPressed(this) }
         this.onHover = () => { if(functions.onHover) functions.onHover(this) }
         this.onNotHover = () => { if(functions.onNotHover) functions.onNotHover(this) }
@@ -55,6 +52,10 @@ class Button {
         this.hitbox = new Hitbox(x, y, x + width, y + height)
 
         allButtons.push(this)
+    }
+
+    updateHitbox() {
+        this.hitbox.set(this.position.x, this.position.y, this.position.x + this.size.x, this.position.y + this.size.y)
     }
 
     mouseOver() {
@@ -80,9 +81,9 @@ class Button {
         rect(this.position.x, this.position.y, this.size.x, this.size.y,
             this.borderRadius, this.borderRadius, this.borderRadius, this.borderRadius)
             
-        textAlign(CENTER, CENTER)
         textFont(this.text.font)
         textSize(this.text.size)
+        textAlign(CENTER, CENTER)
         fill(...this.text.color)
 
         text(this.text.text, this.position.x + this.text.offsetX, this.position.y + this.text.offsetY, this.size.x, this.size.y)

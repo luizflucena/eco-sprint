@@ -1,8 +1,8 @@
 var shaders = { pixelated: undefined, screen: undefined }
 var textures = { tiles: {}, spritesheets: {}, sprites: {}, bg: {} }
-var spriteSheets = { player: undefined }
+var spriteSheets = { player: undefined, sand: undefined }
 var sounds = { music: {}, sfx: {} }
-var fonts = { extrabold: undefined }
+var fonts = { regular: undefined, bold: undefined, extrabold: undefined }
 function preload() {
     loadAndDefineShader('pixelated')
     loadAndDefineShader('screen')
@@ -12,18 +12,29 @@ function preload() {
     loadAndDefineImage('spritesheets/characters.png', (img) => {
         sliceSpriteSheet('player', img, 4, 23)
     })
+    loadAndDefineImage('spritesheets/sand.png', (img) => {
+        sliceSpriteSheet('sand', img, 6, 10)
+    })
     loadAndDefineImage('bg/beach1.png')
     loadAndDefineImage('bg/beach2.png')
     loadAndDefineImage('bg/beach3.png')
     loadAndDefineImage('bg/beach4.png')
+    loadAndDefineImage('sprites/umbrella.png')
+    loadAndDefineImage('sprites/bins.png')
+    loadAndDefineImage('bg/menu_bg.jpg')
+    loadAndDefineImage('logo.png')
 
     loadAndDefineSound('music/wanko05.mp3')
     loadAndDefineSound('sfx/ocean.mp3')
     loadAndDefineSound('sfx/jump.wav')
     loadAndDefineSound('sfx/trash.wav')
     loadAndDefineSound('sfx/start.wav')
+    loadAndDefineSound('sfx/jump2.wav')
+    loadAndDefineSound('sfx/click.wav')
 
-    fonts.extrabold = loadFont('assets/fonts/OpenSans-ExtraBold.ttf')
+    fonts.regular = loadFont('assets/fonts/Karla-Regular.ttf')
+    fonts.bold = loadFont('assets/fonts/Karla-Bold.ttf')
+    fonts.extrabold = loadFont('assets/fonts/Karla-ExtraBold.ttf')
 }
 
 /* -------------------------------------------------------------------------- */

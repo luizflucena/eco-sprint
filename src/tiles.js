@@ -26,6 +26,8 @@ class Tilemap {
     addHitbox(minX, minY, maxX, maxY) {
         const physicsObj = new PhysicsObject(this)
 
+        physicsObj.friction = 0.5
+
         if(typeof minX === 'number')
             physicsObj.hitbox.set(minX, minY, maxX, maxY)
         else
@@ -53,7 +55,7 @@ class Tilemap {
     }
 
     // fonte: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-    tileLineFill(x1, x2, y1, y2, thickness, texture) {
+    tileLineFill(x1, x2, y1, y2, thickness, texture, addHitbox = true) {
         const yOffset = y1 > y2 ? -1 : 1
 
         const dx = x2 - x1
@@ -61,20 +63,21 @@ class Tilemap {
         let D = 2*dy - dx
         let y = y1
 
-        let minX = x1*tileSize - 50, maxX
+        const halfTile = tileSize/2
+        let minX = x1*tileSize - halfTile, maxX
         let minY, maxY
 
         for (let x = x1; x <= x2; ++x) {
             if(D > 0) {
-                minY = y*tileSize + 50
-                maxY = (y + thickness)*tileSize + 50
-                maxX = x*tileSize - 50
+                minY = y*tileSize + halfTile*-Math.sign(thickness)
+                maxY = (y + thickness)*tileSize + halfTile*-Math.sign(thickness)
+                maxX = x*tileSize - halfTile
                 if(minY > maxY) {
                     const aux = minY
                     minY = maxY
                     maxY = aux
                 }
-                this.addHitbox(minX, minY, maxX, maxY)
+                if(addHitbox && x !== x1) this.addHitbox(minX, minY, maxX, maxY)
                 minX = maxX
 
                 y += yOffset
@@ -88,15 +91,15 @@ class Tilemap {
             }
         }
 
-        minY = y*tileSize + 50
-        maxY = (y + thickness)*tileSize + 50
+        minY = y*tileSize + halfTile*-Math.sign(thickness)
+        maxY = (y + thickness)*tileSize + halfTile*-Math.sign(thickness)
         if(minY > maxY) {
             const aux = minY
             minY = maxY
             maxY = aux
         }
-        maxX = x2*tileSize + 50
-        this.addHitbox(minX, minY, maxX, maxY)
+        maxX = x2*tileSize + halfTile
+        if(addHitbox) this.addHitbox(minX, minY, maxX, maxY)
     }
 
     enableAllColliders() {
