@@ -6,6 +6,6 @@ class TrashBin extends GameObject {
 
         this.physics.enabled = true
         this.physics.trigger = true
-        this.physics.setCollisionCallback(callback)
+        this.physics.setCollisionEnterCallback(callback)
     }
 }

@@ -24,35 +24,62 @@ scenes.menu = new Scene('menu', {
 
         buttonMode(CENTER)
 
-        const jogar = new Button('Jogar', 0, -120, 400, 100, {
+        const jogar = new Button('Jogar', 440, -120, 400, 105, {
             onClick: () => {
                 debug.log('jogar')
                 sounds.sfx.start.play()
                 setCurrentScene(scenes.teste)
+            },
+
+            onHover: (b) => {
+                b.extendLeftAnimation(400, 55)
+            },
+
+            onNotHover: (b) => {
+                b.contractToOriginal(400)
             }
         })
         buttons.push(jogar)
 
-        const controles = new Button('Controles', 0, 0, 400, 100, {
+        const controles = new Button('Controles', 440, 0, 400, 105, {
             onClick: () => {
                 debug.log('controles')
                 setCurrentScene(scenes.controles)
+            },
+
+            onHover: (b) => {
+                b.extendLeftAnimation(400, 55)
+            },
+
+            onNotHover: (b) => {
+                b.contractToOriginal(400)
             }
         })
         buttons.push(controles)
 
-        const creditos = new Button('Créditos', 0, 120, 400, 100, {
+        const creditos = new Button('Créditos', 440, 120, 400, 105, {
             onClick: () => {
                 debug.log('créditos')
                 setCurrentScene(scenes.creditos)
+            },
+
+            onHover: (b) => {
+                b.extendLeftAnimation(400, 55)
+            },
+
+            onNotHover: (b) => {
+                b.contractToOriginal(400)
             }
         })
         buttons.push(creditos)
 
         buttons.forEach((b) => {
             b.text.offsetY = -7
-            b.position.y += 115
-            b.updateHitbox()
+            b.text.offsetX = -50
+            b.text.color = [1]
+            b.text.align = RIGHT
+            b.texture = textures.gradient_inverse
+            b.borderRadius = 0
         })
     },
 
@@ -62,15 +89,15 @@ scenes.menu = new Scene('menu', {
         drawGui(() => {
             push()
 
-            rectMode(CENTER)
-            rect(0, -baseHeight/2 + 110, 550, 310, 0, 0, 25, 25)
-
-            imageMode(CENTER)
-            translate(0, -220)
-            scale(0.7)
-            image(textures.logo, 0, 0)
+            shader(shaders.pixelated)
+            shaders.pixelated.setUniform('uTexture', textures.bg.menu)
+            shaders.pixelated.setUniform('uSpriteRes', [textures.bg.menu.width, textures.bg.menu.height])
+            rect(0, 0, baseWidth, -baseHeight)
 
             pop()
+
+            imageMode(CENTER)
+            image(textures.logo_glow, -250, 0)
 
             for (let i = 0; i < sceneScope.buttons.length; ++i) {
                 sceneScope.buttons[i].draw()
@@ -100,6 +127,14 @@ scenes.teste = new Scene('teste', {
     setup: (ctx) => {
         const sceneScope = ctx.variables
 
+        const beachBg = new ParallaxBackground([
+            textures.bg.beach1,
+            textures.bg.beach2,
+            textures.bg.beach3,
+            textures.bg.beach4
+        ], [0.2, 0.2])
+        sceneScope.beachBg = beachBg
+
         const groundTilemap = new Tilemap()
         groundTilemap.tileLineFill(-10, 66, 0, -5, -8, textures.tiles.sand)
         groundTilemap.tileLineFill(67, 100, -5, -5, -8, textures.tiles.sand)
@@ -123,7 +158,10 @@ scenes.teste = new Scene('teste', {
         const trash = sceneScope.trash = []
         trash.push(new Trash(5, 2, () => { ++sceneScope.trashCount }))
 
-        const levelEnd = sceneScope.levelEnd = new TrashBin(155, -9)
+        const levelEnd = sceneScope.levelEnd = new TrashBin(155, -9, () => {
+            debug.log('teste')
+        })
+        player.position.set(15000, 0)
 
         const lowerLevelLimit = new PhysicsObject()
         lowerLevelLimit.enabled = true
@@ -138,7 +176,9 @@ scenes.teste = new Scene('teste', {
 
     draw: (ctx) => {
         const sceneScope = ctx.variables
-
+        
+        sceneScope.beachBg.draw()
+        
         sceneScope.groundTilemap.draw()
         for(let i = 0; i < sceneScope.trash.length; ++i) {
             sceneScope.trash[i].draw()
@@ -149,7 +189,7 @@ scenes.teste = new Scene('teste', {
         sceneScope.levelEnd.draw()
         sceneScope.levelEnd.physics.hitbox.draw()
         drawPlayer()
-
+        
         drawCamera()
         drawGui(() => {
             rectMode(CENTER)
@@ -222,13 +262,16 @@ scenes.creditos = new Scene('creditos', {
 
         buttonMode(CORNER)
 
-        const voltar = new Button('Voltar', baseWidth/2 - 260 - 10, baseHeight/2 - 100 - 10, 260, 100, {
+        const voltar = new Button('Voltar', -baseWidth/2, -baseHeight/2, 260, 100, {
             onClick: () => {
                 debug.log('menu')
                 setCurrentScene(scenes.menu)
             }
         })
         voltar.text.offsetY = -7
+        voltar.text.color = [1]
+        voltar.texture = textures.gradient
+        voltar.borderRadius = 0
 
         sceneScope.voltar = voltar
     },
@@ -238,7 +281,7 @@ scenes.creditos = new Scene('creditos', {
 
         drawGui(() => {
             imageMode(CENTER)
-            image(textures.bg.menu_bg, 0, 0, baseWidth, baseHeight)
+            image(textures.bg.creditos, 0, 0, baseWidth, baseHeight)
             textAlign(CENTER, CENTER)
 
             const y = 70

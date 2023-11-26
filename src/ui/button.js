@@ -28,7 +28,9 @@ class Button {
         this.enabled = false
 
         this.position = Vector2.create(x, y)
+        this._originalPosition = this.position.copy()
         this.size = Vector2.create(width, height)
+        this._originalSize = this.size.copy()
         this.borderRadius = 10
 
         const playClickSound = () => { sounds.sfx.click.play() }
@@ -39,6 +41,7 @@ class Button {
         this.onNotHover = () => { if(functions.onNotHover) functions.onNotHover(this) }
 
         this.color = [1]
+        this.texture = undefined
 
         this.text = {
             text: text,
@@ -46,12 +49,36 @@ class Button {
             size: 60,
             color: [0],
             offsetX: 0,
-            offsetY: 0
+            offsetY: 0,
+            align: CENTER
         }
 
         this.hitbox = new Hitbox(x, y, x + width, y + height)
 
+        this.cache = {}
+
         allButtons.push(this)
+    }
+
+    get originalPosition() {
+        return this._originalPosition
+    }
+
+    get originalSize() {
+        return this._originalSize
+    }
+
+    extendLeftAnimation(speed, amount) {
+        const anim = fpsAdjustment * speed
+
+        this.size.x = Math.min(this.size.x + anim, this.originalSize.x + amount)
+        this.position.x = Math.max(this.position.x - anim, this.originalPosition.x - amount)
+    }
+    contractToOriginal(speed) {
+        const anim = fpsAdjustment * speed
+
+        this.size.x = Math.max(this.size.x - anim, this.originalSize.x)
+        this.position.x = Math.min(this.position.x + anim, this.originalPosition.x)
     }
 
     updateHitbox() {
@@ -78,12 +105,13 @@ class Button {
         rectMode(CORNER)
         
         fill(...this.color)
+        if(this.texture !== undefined) texture(this.texture)
         rect(this.position.x, this.position.y, this.size.x, this.size.y,
             this.borderRadius, this.borderRadius, this.borderRadius, this.borderRadius)
             
         textFont(this.text.font)
         textSize(this.text.size)
-        textAlign(CENTER, CENTER)
+        textAlign(this.text.align, CENTER)
         fill(...this.text.color)
 
         text(this.text.text, this.position.x + this.text.offsetX, this.position.y + this.text.offsetY, this.size.x, this.size.y)

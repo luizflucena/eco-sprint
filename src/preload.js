@@ -1,11 +1,12 @@
-var shaders = { pixelated: undefined, screen: undefined }
+var shaders = { pixelated: undefined, screen: undefined, parallax: undefined }
 var textures = { tiles: {}, spritesheets: {}, sprites: {}, bg: {} }
 var spriteSheets = { player: undefined, sand: undefined }
 var sounds = { music: {}, sfx: {} }
-var fonts = { regular: undefined, bold: undefined, extrabold: undefined }
+var fonts = { regular: undefined, bold: undefined, extrabold: undefined, square: undefined }
 function preload() {
     loadAndDefineShader('pixelated')
     loadAndDefineShader('screen')
+    loadAndDefineShader('parallax')
 
     loadAndDefineImage('tiles/sand.png')
     loadAndDefineImage('tiles/teste.png')
@@ -19,10 +20,14 @@ function preload() {
     loadAndDefineImage('bg/beach2.png')
     loadAndDefineImage('bg/beach3.png')
     loadAndDefineImage('bg/beach4.png')
+    loadAndDefineImage('bg/creditos.jpg')
+    loadAndDefineImage('bg/menu.png')
     loadAndDefineImage('sprites/umbrella.png')
     loadAndDefineImage('sprites/bins.png')
-    loadAndDefineImage('bg/menu_bg.jpg')
     loadAndDefineImage('logo.png')
+    loadAndDefineImage('logo_glow.png')
+    loadAndDefineImage('gradient.png')
+    loadAndDefineImage('gradient_inverse.png')
 
     loadAndDefineSound('music/wanko05.mp3')
     loadAndDefineSound('sfx/ocean.mp3')
@@ -35,6 +40,7 @@ function preload() {
     fonts.regular = loadFont('assets/fonts/Karla-Regular.ttf')
     fonts.bold = loadFont('assets/fonts/Karla-Bold.ttf')
     fonts.extrabold = loadFont('assets/fonts/Karla-ExtraBold.ttf')
+    fonts.square = loadFont('assets/fonts/Square.ttf')
 }
 
 /* -------------------------------------------------------------------------- */

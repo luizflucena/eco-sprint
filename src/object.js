@@ -54,11 +54,11 @@ class GameObject {
         if(this.animation !== undefined) {
             shader(shaders.pixelated)
             shaders.pixelated.setUniform('uTexture', this.animation.currentSprite)
-            shaders.pixelated.setUniform('uSpriteRes', this.animation.spriteResolution)
+            shaders.pixelated.setUniform('uSpriteRes', [this.animation.spriteResolution, this.animation.spriteResolution])
         } else if(this.sprite !== undefined) {
             shader(shaders.pixelated)
             shaders.pixelated.setUniform('uTexture', this.sprite)
-            shaders.pixelated.setUniform('uSpriteRes', this.sprite.width)
+            shaders.pixelated.setUniform('uSpriteRes', [this.sprite.width, this.sprite.height])
         }
         square(0, 0, 100)
         

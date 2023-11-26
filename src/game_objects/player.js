@@ -9,9 +9,20 @@ class Player extends GameObject {
         this.acceleration = 60
         this.animations = { walk: undefined, run: undefined, idle: undefined }
         this.directionX = 1
+
+        this._controlsLocked = false
+    }
+
+    lockControls() {
+        this._controlsLocked = true
+    }
+    unlockControls() {
+        this._controlsLocked = false
     }
 
     walkLeft() {
+        if(this._controlsLocked) return;
+
         player.physics.applyForce(-this.acceleration * fpsAdjustment, 0)
 
         if(player.physics.velocity.x < -player.maxVelocity)
@@ -19,6 +30,8 @@ class Player extends GameObject {
     }
 
     walkRight() {
+        if(this._controlsLocked) return;
+
         player.physics.applyForce(this.acceleration * fpsAdjustment, 0)
 
         if(player.physics.velocity.x > player.maxVelocity)
@@ -26,6 +39,8 @@ class Player extends GameObject {
     }
 
     jump() {
+        if(this._controlsLocked) return;
+
         if(this.physics.grounded) {
             this.physics.velocity.y = 20
 

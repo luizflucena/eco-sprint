@@ -2,12 +2,12 @@
     precision mediump float;
 #endif
 
-void pixelateUV(inout vec2 uv, float res) {
+void pixelateUV(inout vec2 uv, vec2 res) {
     uv = (floor(uv*res) + 0.5)/res;
 }
 
 uniform sampler2D uTexture;
-uniform float uSpriteRes;
+uniform vec2 uSpriteRes;
 
 varying vec4 vPos;
 varying vec2 vTexCoord;

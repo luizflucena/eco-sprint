@@ -122,7 +122,7 @@ class Tilemap {
         push()
         rectMode(CENTER)
         shader(shaders.pixelated)
-        shaders.pixelated.setUniform('uSpriteRes', tileRes)
+        shaders.pixelated.setUniform('uSpriteRes', [tileRes, tileRes])
 
         for(let i = 0; i < this.tiles.length; ++i) {
             this.tiles[i].draw()

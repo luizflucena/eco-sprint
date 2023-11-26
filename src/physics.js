@@ -14,6 +14,8 @@ class PhysicsObject {
         this.trigger = false
 
         this._onCollision = () => {}
+        this._onCollisionEnter = () => {}
+        this._collisionEnterFlag = false
 
         this.grounded = false // Se o objeto está no chão
 
@@ -30,6 +32,14 @@ class PhysicsObject {
 
     setCollisionCallback(action) {
         this._onCollision = action // action(physicsObject, parentObject, HitInfo)
+    }
+    setCollisionEnterCallback(action) {
+        this._onCollisionEnter = (phisObj, parentObj, hit) => {
+            if(this._collisionEnterFlag === false)
+                action(phisObj, parentObj, hit)
+
+            this._collisionEnterFlag = true
+        }
     }
 
     applyForce(x, y) {
@@ -68,6 +78,7 @@ class PhysicsObject {
             const hit = this.hitbox.testCollisionAABB(obj, this.velocity)
             if(hit.hasHit) {
                 obj._onCollision(this, this.parentObject, hit)
+                obj._onCollisionEnter(this, this.parentObject, hit)
                 if(obj.trigger || this.isTagIgnored(obj.tag)) continue;
 
                 const normalDotGravity = hit.normal.y * Math.sign(this.gravity)
