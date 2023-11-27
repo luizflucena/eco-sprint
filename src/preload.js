@@ -1,6 +1,6 @@
 var shaders = { pixelated: undefined, screen: undefined, parallax: undefined }
 var textures = { tiles: {}, spritesheets: {}, sprites: {}, bg: {} }
-var spriteSheets = { player: undefined, sand: undefined }
+var spriteSheets = { player: undefined, trash: undefined }
 var sounds = { music: {}, sfx: {} }
 var fonts = { regular: undefined, bold: undefined, extrabold: undefined, square: undefined }
 function preload() {
@@ -13,8 +13,8 @@ function preload() {
     loadAndDefineImage('spritesheets/characters.png', (img) => {
         sliceSpriteSheet('player', img, 4, 23)
     })
-    loadAndDefineImage('spritesheets/sand.png', (img) => {
-        sliceSpriteSheet('sand', img, 6, 10)
+    loadAndDefineImage('spritesheets/trash.png', (img) => {
+        sliceSpriteSheet('trash', img, 1, 5)
     })
     loadAndDefineImage('bg/beach1.png')
     loadAndDefineImage('bg/beach2.png')

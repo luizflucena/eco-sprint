@@ -27,12 +27,8 @@ function drawGui(content = () => {}) {
         content()
     })
 
-    // push()
-
     shader(shaders.screen)
     shaders.screen.setUniform('uScreenBuffer', guiBuffer)
     square(0, 0, 100)
     resetShader()
-    
-    // pop()
 }

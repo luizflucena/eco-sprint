@@ -5,31 +5,45 @@ var camSmoothness = Vector2.create(0.2, 0.5)
 var cameraPosition = Vector2.zero
 
 function setupCamera() {
-	orthoScale *= scaleProportionality
-
-    mainCam = createCamera()
+	mainCam = createCamera()
 	// Movendo a câmera pra que o ponto (0, 0) seja o canto inferior esquerdo da tela,
 	// e para que o valor de y aumente no sentido para cima
 	// @ts-ignore
 	mainCam.camera(width/2, height/2, -20, width/2, height/2, 0, 0, -1, 0)
 	setCamera(mainCam)
-	ortho(-width/2 * orthoScale, width/2 * orthoScale, -height/2 * orthoScale, height/2 * orthoScale)
+	setCameraOrthoScale(orthoScale)
+}
 
-	// camSmoothness.set(0.0001, 0.0001)
+function setCameraOrthoScale(scale) {
+	orthoScale = scale * scaleProportionality
+
+	ortho(-width/2 * orthoScale, width/2 * orthoScale, -height/2 * orthoScale, height/2 * orthoScale)
+}
+
+var cameraIsLocked = false
+function lockCameraOnPoint(x, y) {
+	cameraFocusPoint.set(x, y)
+	cameraIsLocked = true
+}
+function releaseCameraLock() {
+	cameraIsLocked = false
 }
 
 var positionOfDirectionChange = 0
 var directionBuffer = 1
 var cameraAhead = 1
 var cameraAheadBuffer = 1
+var cameraFocusPoint = Vector2.zero
 function drawCamera() {
-	const smoothnessX = deltaTimeSeconds/camSmoothness.x
-	const smoothnessY = deltaTimeSeconds/camSmoothness.y
+	if(!cameraIsLocked)
+		cameraFocusPoint.set(player.position)
+	else
+		cameraAhead = 0
 
 	// Movimentação da câmera acompanhando o jogador
 	mainCam.setPosition(
-		lerp(mainCam.eyeX, player.position.x + cameraAhead, smoothnessX),
-		lerp(mainCam.eyeY, player.position.y, smoothnessY),
+		lerp(mainCam.eyeX, cameraFocusPoint.x + cameraAhead, deltaTimeSeconds/camSmoothness.x),
+		lerp(mainCam.eyeY, cameraFocusPoint.y, deltaTimeSeconds/camSmoothness.y),
 		-20
 	)
 
@@ -46,6 +60,4 @@ function drawCamera() {
 	} else {
 		cameraAhead = Math.max(cameraAheadBuffer + signedDistFromDirectionChange/2, -400)
 	}
-
-	debug.updateGauge('free2', Math.abs(signedDistFromDirectionChange))
 }

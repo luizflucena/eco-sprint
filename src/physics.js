@@ -15,7 +15,9 @@ class PhysicsObject {
 
         this._onCollision = () => {}
         this._onCollisionEnter = () => {}
+        this._onCollisionExit = () => {}
         this._collisionEnterFlag = false
+        this._isCollidingWithPlayer = false // Só funciona se for usada setCollisionCallback()
 
         this.grounded = false // Se o objeto está no chão
 
@@ -30,16 +32,22 @@ class PhysicsObject {
         allPhysicsObjects.push(this)
     }
 
-    setCollisionCallback(action) {
-        this._onCollision = action // action(physicsObject, parentObject, HitInfo)
+    // action(physicsObject, parentObject, HitInfo)
+    setCollisionCallback(action = (phisObj, parentObj, hit) => {}) {
+        this._onCollision = action
     }
-    setCollisionEnterCallback(action) {
+    setCollisionEnterCallback(action = (phisObj, parentObj, hit) => {}) {
         this._onCollisionEnter = (phisObj, parentObj, hit) => {
+            if(phisObj.tag !== 'player') return;
+
             if(this._collisionEnterFlag === false)
                 action(phisObj, parentObj, hit)
 
             this._collisionEnterFlag = true
         }
+    }
+    setCollisionExitCallback(action = (phisObj, parentObj, hit) => {}) {
+        this._onCollisionExit = action
     }
 
     applyForce(x, y) {
@@ -77,8 +85,9 @@ class PhysicsObject {
 
             const hit = this.hitbox.testCollisionAABB(obj, this.velocity)
             if(hit.hasHit) {
-                obj._onCollision(this, this.parentObject, hit)
+                if(this.tag === 'player') obj._isCollidingWithPlayer = true
                 obj._onCollisionEnter(this, this.parentObject, hit)
+                obj._onCollision(this, this.parentObject, hit)
                 if(obj.trigger || this.isTagIgnored(obj.tag)) continue;
 
                 const normalDotGravity = hit.normal.y * Math.sign(this.gravity)
@@ -95,6 +104,16 @@ class PhysicsObject {
                 // Se o ângulo da superfície está entre -45 e 45 graus, o objeto está no chão
                 if(Math.abs(Math.acos(normalDotGravity)) <= PI/4)
                     this.grounded = true
+            } else {
+                if(this.tag === 'player') {
+                    obj._isCollidingWithPlayer = false
+
+                    if(obj._collisionEnterFlag) {
+                        obj._onCollisionExit(this, this.parentObject, hit)
+                        obj._collisionEnterFlag = false
+                    }
+                        
+                }
             }
         }
 

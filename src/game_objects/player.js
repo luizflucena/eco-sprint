@@ -60,14 +60,14 @@ function setupPlayer() {
     player.scale.set(2, 2)
 
     player.animations.walk = new GameAnimation(spriteSheets.player, 10,
-        spriteSheets.player.getSpriteIndex(0, 2),
-        spriteSheets.player.getSpriteIndex(3, 2)
+        spriteSheets.player.getSpriteIndex(1, 3),
+        spriteSheets.player.getSpriteIndex(4, 3)
     )
     player.animations.run = new GameAnimation(spriteSheets.player, 8,
-        spriteSheets.player.getSpriteIndex(14, 2),
-        spriteSheets.player.getSpriteIndex(17, 2)
+        spriteSheets.player.getSpriteIndex(15, 3),
+        spriteSheets.player.getSpriteIndex(18, 3)
     )
-    player.animations.idle = spriteSheets.player.getSprite(0, 2)
+    player.animations.idle = spriteSheets.player.getSprite(1, 3)
 
     player.sprite = player.animations.idle
 }

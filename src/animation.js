@@ -7,7 +7,7 @@ class SpriteSheet {
     }
 
     getSpriteIndex(x, y) {
-        return x + y * this.columns
+        return (x - 1) + (y - 1) * this.columns
     }
 
     getSprite(x, y) {

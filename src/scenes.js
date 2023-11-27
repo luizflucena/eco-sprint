@@ -26,8 +26,8 @@ scenes.menu = new Scene('menu', {
 
         const jogar = new Button('Jogar', 440, -120, 400, 105, {
             onClick: () => {
-                sounds.sfx.start.play()
-                setCurrentScene(scenes.teste)
+                // sounds.sfx.start.play()
+                setCurrentScene(scenes.levelSelect)
             },
 
             onHover: (b) => {
@@ -121,9 +121,100 @@ scenes.menu = new Scene('menu', {
     }
 })
 
+scenes.levelSelect = new Scene('level select', {
+    setup: (ctx) => {
+        const sceneScope = ctx.variables
+        const buttons = sceneScope.buttons = []
+
+        buttonMode(CENTER)
+        const spacing = 40
+
+        const lvl1 = new Button('1', -50 -spacing/2, 0, 100, 100, {
+            onClick: () => {
+                sounds.sfx.start.play()
+                setCurrentScene(scenes.teste)
+            }
+        })
+        buttons.push(lvl1)
+
+        const lvl2 = new Button('2', 50 + spacing/2, 0, 100, 100, {
+            onClick: () => {
+                sounds.sfx.start.play()
+                setCurrentScene(scenes.teste)
+            }
+        })
+        buttons.push(lvl2)
+
+        buttonMode(CORNER)
+
+        const voltar = new Button('Voltar', baseWidth/2 - 260, baseHeight/2 - 120, 260, 80, {
+            onClick: () => {
+                setCurrentScene(scenes.menu)
+            }
+        })
+        voltar.text.color = [1]
+        voltar.text.font = fonts.bold
+        // @ts-ignore
+        voltar.text.align = RIGHT
+        voltar.text.offsetX = -30
+        voltar.texture = textures.gradient_inverse
+        voltar.borderRadius = 0
+        buttons.push(voltar)
+
+        buttons.forEach((b) => {
+            b.text.offsetY = -7
+        })
+    },
+
+    draw: (ctx) => {
+        const sceneScope = ctx.variables
+
+        drawGui(() => {
+            shader(shaders.pixelated)
+            shaders.pixelated.setUniform('uTexture', textures.bg.menu)
+            shaders.pixelated.setUniform('uSpriteRes', [textures.bg.menu.width, textures.bg.menu.height])
+            rect(0, 0, baseWidth, -baseHeight)
+            resetShader()
+
+            fill(0, 0, 0, 0.7)
+            rect(0, 0, baseWidth, baseHeight)
+
+            textAlign(CENTER, CENTER)
+            fill(1)
+
+            textFont(fonts.extrabold)
+            textSize(65)
+            text('Selecionar fase', 0, -200)
+
+            for (let i = 0; i < sceneScope.buttons.length; ++i) {
+                sceneScope.buttons[i].draw()
+                // sceneScope.buttons[i].hitbox.draw()
+            }
+        })
+    },
+
+    onEnable: (ctx) => {
+        const sceneScope = ctx.variables
+
+        for (let i = 0; i < sceneScope.buttons.length; ++i) {
+            sceneScope.buttons[i].enabled = true
+        }
+    },
+
+    onDisable: (ctx) => {
+        const sceneScope = ctx.variables
+
+        for (let i = 0; i < sceneScope.buttons.length; ++i) {
+            sceneScope.buttons[i].enabled = false
+        }
+    }
+})
+
 scenes.teste = new Scene('teste', {
     setup: (ctx) => {
         const sceneScope = ctx.variables
+
+        const level = new Level(4)
 
         const beachBg = new ParallaxBackground([
             textures.bg.beach1,
@@ -134,8 +225,10 @@ scenes.teste = new Scene('teste', {
         sceneScope.beachBg = beachBg
 
         const groundTilemap = new Tilemap()
-        groundTilemap.tileLineFill(-10, 66, 0, -5, -8, textures.tiles.sand)
-        groundTilemap.tileLineFill(67, 100, -5, -5, -8, textures.tiles.sand)
+        groundTilemap.tileLineFill(-30, -11, 10, 5, -30, textures.tiles.sand)
+
+        groundTilemap.tileLineFill(-10, 66, 0, -5, -20, textures.tiles.sand)
+        groundTilemap.tileLineFill(67, 100, -5, -5, -20, textures.tiles.sand)
 
         groundTilemap.tileLineFill(21, 26, -1, -1, -2, textures.tiles.sand)
         groundTilemap.tileLineFill(31, 53, 1, 3, -2, textures.tiles.sand)
@@ -145,8 +238,8 @@ scenes.teste = new Scene('teste', {
         groundTilemap.tileLineFill(81, 92, 1, -2, -4, textures.tiles.sand)
         groundTilemap.tileLineFill(93, 101, 2, -3, -6, textures.tiles.sand)
 
-        groundTilemap.tileLineFill(101, 150, -5, -10, -8, textures.tiles.sand)
-        groundTilemap.tileLineFill(151, 200, -10, -10, -8, textures.tiles.sand)
+        groundTilemap.tileLineFill(101, 150, -5, -10, -20, textures.tiles.sand)
+        groundTilemap.tileLineFill(151, 200, -10, -10, -20, textures.tiles.sand)
         sceneScope.groundTilemap = groundTilemap
 
         const umbrellas = sceneScope.umbrellas = []
@@ -154,22 +247,38 @@ scenes.teste = new Scene('teste', {
         umbrellas.push(new Umbrella(72, -4))
 
         const trash = sceneScope.trash = []
-        trash.push(new Trash(5, 2, () => { ++sceneScope.trashCount }))
+        trash.push(new Trash(5, 1, () => { ++sceneScope.trashCount }))
+        trash.push(new Trash(67, -3, () => { ++sceneScope.trashCount }))
+        trash.push(new Trash(107, -4, () => { ++sceneScope.trashCount }))
+        trash.push(new Trash(150, -8, () => { ++sceneScope.trashCount }))
 
         const levelEnd = sceneScope.levelEnd = new TrashBin(155, -9, () => {
-            debug.log('teste')
+            level.complete(sceneScope.trashCount)
         })
-        player.position.set(15000, 0)
 
         const lowerLevelLimit = new PhysicsObject()
         lowerLevelLimit.enabled = true
         lowerLevelLimit.trigger = true
         lowerLevelLimit.hitbox.set(-1e5, -1e5, 1e5, -3000)
         lowerLevelLimit.setCollisionCallback(() => {
-            player.position.set(300, 100)
+            player.position.set(0, 600)
             player.physics.velocity.set(0, 0)
         })
         sceneScope.lowerLevelLimit = lowerLevelLimit
+
+        const zoomOutZone = sceneScope.zoomOutZone = new PhysicsObject()
+        zoomOutZone.tag = 'zoomOutZone'
+        zoomOutZone.enabled = true
+        zoomOutZone.trigger = true
+        zoomOutZone.hitbox.set(4700, -1000, 8300, 1500)
+        zoomOutZone.setCollisionEnterCallback(() => {
+            lockCameraOnPoint(6600, 0)
+            setCameraOrthoScale(3)
+        })
+        zoomOutZone.setCollisionExitCallback(() => {
+            releaseCameraLock()
+            setCameraOrthoScale(2)
+        })
 
         sceneScope.fadeInOpacity = 1
         
@@ -182,14 +291,33 @@ scenes.teste = new Scene('teste', {
         sceneScope.beachBg.draw(mainCam.eyeX, mainCam.eyeY)
         
         sceneScope.groundTilemap.draw()
+
         for(let i = 0; i < sceneScope.trash.length; ++i) {
             sceneScope.trash[i].draw()
         }
+
         for(let i = 0; i < sceneScope.umbrellas.length; ++i) {
             sceneScope.umbrellas[i].draw()
         }
+
         sceneScope.levelEnd.draw()
-        sceneScope.levelEnd.physics.hitbox.draw()
+        // sceneScope.levelEnd.physics.hitbox.draw()
+
+        sceneScope.zoomOutZone.hitbox.draw()
+        // if(sceneScope.zoomOutZone._isCollidingWithPlayer) {
+        //     if(!sceneScope.zoomOutFlag)
+        //         setCameraOrthoScale(3)
+
+        //     sceneScope.zoomOutFlag = true
+        //     sceneScope.zoomBackFlag = false
+        // } else {
+        //     if(!sceneScope.zoomBackFlag)
+        //         setCameraOrthoScale(2)
+
+        //     sceneScope.zoomOutFlag = false
+        //     sceneScope.zoomBackFlag = true
+        // }
+
         drawPlayer()
         
         drawCamera()
@@ -221,6 +349,9 @@ scenes.teste = new Scene('teste', {
 
         sounds.sfx.ocean.play()
         sounds.music.wanko05.play(4)
+
+        player.position.set(0, 100)
+        mainCam.setPosition(player.position.x, player.position.y + 2000, -20)
     },
 
     onDisable: (ctx) => {
@@ -381,7 +512,6 @@ function drawCurrentScene() {
     currentScene.draw()
 }
 
-// Não deve ser usada muito frequentemente
 function setCurrentScene(scene) {
     if(currentScene !== undefined)
         currentScene.onDisable()

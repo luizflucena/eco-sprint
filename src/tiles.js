@@ -119,13 +119,17 @@ class Tilemap {
     }
 
     draw() {
-        // push()
         rectMode(CENTER)
         shader(shaders.pixelated)
         shaders.pixelated.setUniform('uSpriteRes', [tileRes, tileRes])
 
         for(let i = 0; i < this.tiles.length; ++i) {
-            this.tiles[i].draw()
+            if(
+                Math.abs(mainCam.eyeX - this.tiles[i].worldPosition.x) < 2000 &&
+                Math.abs(mainCam.eyeY - this.tiles[i].worldPosition.y) < 1200 ||
+                orthoScale > 12
+            )
+                this.tiles[i].draw()
         }
 
         resetShader()
@@ -133,7 +137,5 @@ class Tilemap {
         // for(let i = 0; i < this.colliders.length; ++i) {
         //     this.colliders[i].hitbox.draw()
         // }
-
-        // pop()
     }
 }

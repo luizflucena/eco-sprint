@@ -7,8 +7,6 @@ class ParallaxBackground {
     draw(referencePositionX, referencePositionY) {
         if(this.parallaxLayers.length === 0) return;
 
-        // push()
-
         shader(shaders.parallax)
         shaders.parallax.setUniform('uRes', [this.parallaxLayers[0].width, this.parallaxLayers[0].height])
         shaders.parallax.setUniform('uPlayerPos', [referencePositionX, referencePositionY])
@@ -19,6 +17,5 @@ class ParallaxBackground {
         square(0, 0, 400)
 
         resetShader()
-        // pop()
     }
 }
