@@ -23,7 +23,7 @@ class Player extends GameObject {
     walkLeft() {
         if(this._controlsLocked) return;
 
-        player.physics.applyForce(-this.acceleration * fpsAdjustment, 0)
+        player.physics.applyForce(-this.acceleration * deltaTimeSeconds, 0)
 
         if(player.physics.velocity.x < -player.maxVelocity)
             player.physics.velocity.x = -player.maxVelocity
@@ -32,7 +32,7 @@ class Player extends GameObject {
     walkRight() {
         if(this._controlsLocked) return;
 
-        player.physics.applyForce(this.acceleration * fpsAdjustment, 0)
+        player.physics.applyForce(this.acceleration * deltaTimeSeconds, 0)
 
         if(player.physics.velocity.x > player.maxVelocity)
             player.physics.velocity.x = player.maxVelocity

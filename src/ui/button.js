@@ -69,13 +69,13 @@ class Button {
     }
 
     extendLeftAnimation(speed, amount) {
-        const anim = fpsAdjustment * speed
+        const anim = deltaTimeSeconds * speed
 
         this.size.x = Math.min(this.size.x + anim, this.originalSize.x + amount)
         this.position.x = Math.max(this.position.x - anim, this.originalPosition.x - amount)
     }
     contractToOriginal(speed) {
-        const anim = fpsAdjustment * speed
+        const anim = deltaTimeSeconds * speed
 
         this.size.x = Math.max(this.size.x - anim, this.originalSize.x)
         this.position.x = Math.min(this.position.x + anim, this.originalPosition.x)

@@ -61,7 +61,7 @@ class PhysicsObject {
     updatePosition(objPosition) {
         if(!this.enabled || !this.dynamic || this.trigger) return
 
-        this.velocity.y -= this.gravity * fpsAdjustment
+        this.velocity.y -= this.gravity * deltaTimeSeconds
 
         // Resistência do ar
         const drag = this.horizontalDrag
@@ -101,7 +101,7 @@ class PhysicsObject {
         if(Math.abs(this.velocity.x) < minVelocity) this.velocity.x = 0
         if(Math.abs(this.velocity.y) < minVelocity) this.velocity.y = 0
 
-        objPosition.add(this.velocity)
+        objPosition.add(this.velocity.x*normalizedDeltaTime, this.velocity.y*normalizedDeltaTime)
         this.hitbox.transformHitbox(objPosition, 1)
     }
 }

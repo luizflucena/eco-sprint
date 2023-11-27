@@ -119,7 +119,7 @@ class Tilemap {
     }
 
     draw() {
-        push()
+        // push()
         rectMode(CENTER)
         shader(shaders.pixelated)
         shaders.pixelated.setUniform('uSpriteRes', [tileRes, tileRes])
@@ -128,10 +128,12 @@ class Tilemap {
             this.tiles[i].draw()
         }
 
+        resetShader()
+
         // for(let i = 0; i < this.colliders.length; ++i) {
         //     this.colliders[i].hitbox.draw()
         // }
 
-        pop()
+        // pop()
     }
 }

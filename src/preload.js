@@ -20,7 +20,6 @@ function preload() {
     loadAndDefineImage('bg/beach2.png')
     loadAndDefineImage('bg/beach3.png')
     loadAndDefineImage('bg/beach4.png')
-    loadAndDefineImage('bg/creditos.jpg')
     loadAndDefineImage('bg/menu.png')
     loadAndDefineImage('sprites/umbrella.png')
     loadAndDefineImage('sprites/bins.png')

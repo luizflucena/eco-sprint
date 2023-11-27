@@ -26,7 +26,6 @@ scenes.menu = new Scene('menu', {
 
         const jogar = new Button('Jogar', 440, -120, 400, 105, {
             onClick: () => {
-                debug.log('jogar')
                 sounds.sfx.start.play()
                 setCurrentScene(scenes.teste)
             },
@@ -43,7 +42,6 @@ scenes.menu = new Scene('menu', {
 
         const controles = new Button('Controles', 440, 0, 400, 105, {
             onClick: () => {
-                debug.log('controles')
                 setCurrentScene(scenes.controles)
             },
 
@@ -59,7 +57,6 @@ scenes.menu = new Scene('menu', {
 
         const creditos = new Button('Créditos', 440, 120, 400, 105, {
             onClick: () => {
-                debug.log('créditos')
                 setCurrentScene(scenes.creditos)
             },
 
@@ -87,14 +84,15 @@ scenes.menu = new Scene('menu', {
         const sceneScope = ctx.variables
 
         drawGui(() => {
-            push()
+            // push()
 
             shader(shaders.pixelated)
             shaders.pixelated.setUniform('uTexture', textures.bg.menu)
             shaders.pixelated.setUniform('uSpriteRes', [textures.bg.menu.width, textures.bg.menu.height])
             rect(0, 0, baseWidth, -baseHeight)
+            resetShader()
 
-            pop()
+            // pop()
 
             imageMode(CENTER)
             image(textures.logo_glow, -250, 0)
@@ -172,12 +170,16 @@ scenes.teste = new Scene('teste', {
             player.physics.velocity.set(0, 0)
         })
         sceneScope.lowerLevelLimit = lowerLevelLimit
+
+        sceneScope.fadeInOpacity = 1
+        
+        sceneScope.sceneTimer = 0
     },
 
     draw: (ctx) => {
         const sceneScope = ctx.variables
         
-        sceneScope.beachBg.draw()
+        sceneScope.beachBg.draw(mainCam.eyeX, mainCam.eyeY)
         
         sceneScope.groundTilemap.draw()
         for(let i = 0; i < sceneScope.trash.length; ++i) {
@@ -197,7 +199,17 @@ scenes.teste = new Scene('teste', {
             textSize(50)
             text(sceneScope.trashCount + (sceneScope.trashCount === 1 ? ' lixo coletado' : ' lixos coletados'),
                 -baseWidth/2 + 10, -baseHeight/2)
+
+            if(sceneScope.fadeInOpacity !== 0) {
+                fill(1, sceneScope.fadeInOpacity)
+                rect(0, 0, baseWidth, baseHeight)
+
+                if(sceneScope.sceneTimer >= 0.5)
+                    sceneScope.fadeInOpacity = Math.max(sceneScope.fadeInOpacity - deltaTimeSeconds*0.75, 0)
+            }
         })
+
+        sceneScope.sceneTimer += deltaTimeSeconds
     },
 
     onEnable: (ctx) => {
@@ -224,13 +236,19 @@ scenes.controles = new Scene('controles', {
 
         buttonMode(CORNER)
 
-        const voltar = new Button('Voltar', baseWidth/2 - 260 - 10, baseHeight/2 - 100 - 10, 260, 100, {
+        const voltar = new Button('Voltar', baseWidth/2 - 260, baseHeight/2 - 120, 260, 80, {
             onClick: () => {
-                debug.log('menu')
                 setCurrentScene(scenes.menu)
             }
         })
         voltar.text.offsetY = -7
+        voltar.text.color = [1]
+        voltar.text.font = fonts.bold
+        // @ts-ignore
+        voltar.text.align = RIGHT
+        voltar.text.offsetX = -30
+        voltar.texture = textures.gradient_inverse
+        voltar.borderRadius = 0
 
         sceneScope.voltar = voltar
     },
@@ -239,6 +257,15 @@ scenes.controles = new Scene('controles', {
         const sceneScope = ctx.variables
 
         drawGui(() => {
+            shader(shaders.pixelated)
+            shaders.pixelated.setUniform('uTexture', textures.bg.menu)
+            shaders.pixelated.setUniform('uSpriteRes', [textures.bg.menu.width, textures.bg.menu.height])
+            rect(0, 0, baseWidth, -baseHeight)
+            resetShader()
+
+            fill(0, 0, 0, 0.7)
+            rect(0, 0, baseWidth, baseHeight)
+
             sceneScope.voltar.draw()
         })
     },
@@ -262,15 +289,18 @@ scenes.creditos = new Scene('creditos', {
 
         buttonMode(CORNER)
 
-        const voltar = new Button('Voltar', -baseWidth/2, -baseHeight/2, 260, 100, {
+        const voltar = new Button('Voltar', baseWidth/2 - 260, baseHeight/2 - 120, 260, 80, {
             onClick: () => {
-                debug.log('menu')
                 setCurrentScene(scenes.menu)
             }
         })
         voltar.text.offsetY = -7
         voltar.text.color = [1]
-        voltar.texture = textures.gradient
+        voltar.text.font = fonts.bold
+        // @ts-ignore
+        voltar.text.align = RIGHT
+        voltar.text.offsetX = -30
+        voltar.texture = textures.gradient_inverse
         voltar.borderRadius = 0
 
         sceneScope.voltar = voltar
@@ -280,9 +310,17 @@ scenes.creditos = new Scene('creditos', {
         const sceneScope = ctx.variables
 
         drawGui(() => {
-            imageMode(CENTER)
-            image(textures.bg.creditos, 0, 0, baseWidth, baseHeight)
+            shader(shaders.pixelated)
+            shaders.pixelated.setUniform('uTexture', textures.bg.menu)
+            shaders.pixelated.setUniform('uSpriteRes', [textures.bg.menu.width, textures.bg.menu.height])
+            rect(0, 0, baseWidth, -baseHeight)
+            resetShader()
+
+            fill(0, 0, 0, 0.7)
+            rect(0, 0, baseWidth, baseHeight)
+            
             textAlign(CENTER, CENTER)
+            fill(1)
 
             const y = 70
 

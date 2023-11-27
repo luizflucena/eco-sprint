@@ -41,15 +41,17 @@ function setup() {
 	setupCamera()
 
 	setupAllScenes()
-	setCurrentScene(scenes.teste) // Definir a cena inicial
+	setCurrentScene(scenes.menu) // Definir a cena inicial
 }
 
-var fpsAdjustment
+var deltaTimeSeconds
+var normalizedDeltaTime
 function draw() {
 	const performanceTimerStart = performance.now()
 
 	const fps = debug.avgOverTime(frameRate(), 75, 'fps')
-	fpsAdjustment = deltaTime * 1e-3
+	deltaTimeSeconds = deltaTime * 1e-3
+	normalizedDeltaTime = deltaTime * 0.075
 	// debug.updateGauge('FPS', fps.toFixed(2))
 	debug.updateGauge('FPS', fps.toFixed(2))
 
