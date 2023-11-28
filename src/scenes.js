@@ -214,7 +214,7 @@ scenes.teste = new Scene('teste', {
     setup: (ctx) => {
         const sceneScope = ctx.variables
 
-        const level = new Level(4)
+        const level = sceneScope.level = new Level(4)
 
         const beachBg = new ParallaxBackground([
             textures.bg.beach1,
@@ -247,20 +247,54 @@ scenes.teste = new Scene('teste', {
         umbrellas.push(new Umbrella(72, -4))
 
         const trash = sceneScope.trash = []
-        trash.push(new Trash(5, 1, () => { ++sceneScope.trashCount }))
-        trash.push(new Trash(67, -3, () => { ++sceneScope.trashCount }))
-        trash.push(new Trash(107, -4, () => { ++sceneScope.trashCount }))
-        trash.push(new Trash(150, -8, () => { ++sceneScope.trashCount }))
+        sceneScope.collectedTrash = []
+        trash.push(new Trash(5, 1))
+        trash.push(new Trash(67, -3))
+        trash.push(new Trash(107, -4))
+        trash.push(new Trash(150, -8))
+        trash.forEach((t) => {
+            t.setPickupCallback(() => {
+                ++sceneScope.trashCount
+                sceneScope.collectedTrash.push(t)
+            })
+        })
 
-        const levelEnd = sceneScope.levelEnd = new TrashBin(155, -9, () => {
+        const levelEnd = sceneScope.levelEnd = new TrashBin(155, -9)
+        levelEnd.physics.setCollisionEnterCallback(() => {
+            lockCameraOnPoint(levelEnd.position.x, levelEnd.position.y + 50)
+            setCameraOrthoScale(0.7)
             level.complete(sceneScope.trashCount)
+
+            const guiHitboxes = sceneScope.trashBinGuiHitboxes = []
+            // guiHitboxes[0].transformHitbox(Vector2.create(-90, 0), 1)
+            const translateVector = Vector2.zero
+            const scaleVector = Vector2.create(0.7, 1)
+            for (let i = 0; i < 5; i++) {
+                const hitbox = new Hitbox();
+                const x = 90
+
+                translateVector.set(-x*2 + x*i, 50)
+                hitbox.transformHitbox(translateVector, scaleVector)
+
+                guiHitboxes.push(hitbox)
+            }
+        })
+        levelEnd.physics.setCollisionCallback(() => {
+            if(!level.isComplete || player.position.x > 15600) return;
+
+            player.physics.applyForce(player.acceleration * deltaTimeSeconds, 0)
+
+            if(player.physics.velocity.x > 8.6)
+                player.physics.velocity.x = 8.6
         })
 
         const lowerLevelLimit = new PhysicsObject()
         lowerLevelLimit.enabled = true
         lowerLevelLimit.trigger = true
         lowerLevelLimit.hitbox.set(-1e5, -1e5, 1e5, -3000)
-        lowerLevelLimit.setCollisionCallback(() => {
+        lowerLevelLimit.setCollisionCallback((obj) => {
+            if(obj.tag !== 'player') return;
+
             player.position.set(0, 600)
             player.physics.velocity.set(0, 0)
         })
@@ -301,22 +335,6 @@ scenes.teste = new Scene('teste', {
         }
 
         sceneScope.levelEnd.draw()
-        // sceneScope.levelEnd.physics.hitbox.draw()
-
-        sceneScope.zoomOutZone.hitbox.draw()
-        // if(sceneScope.zoomOutZone._isCollidingWithPlayer) {
-        //     if(!sceneScope.zoomOutFlag)
-        //         setCameraOrthoScale(3)
-
-        //     sceneScope.zoomOutFlag = true
-        //     sceneScope.zoomBackFlag = false
-        // } else {
-        //     if(!sceneScope.zoomBackFlag)
-        //         setCameraOrthoScale(2)
-
-        //     sceneScope.zoomOutFlag = false
-        //     sceneScope.zoomBackFlag = true
-        // }
 
         drawPlayer()
         
@@ -325,8 +343,61 @@ scenes.teste = new Scene('teste', {
             rectMode(CENTER)
             textAlign(LEFT, TOP)
             textSize(50)
-            text(sceneScope.trashCount + (sceneScope.trashCount === 1 ? ' lixo coletado' : ' lixos coletados'),
-                -baseWidth/2 + 10, -baseHeight/2)
+            text(
+                sceneScope.trashCount + '/' + sceneScope.level.requiredTrash + ' lixos coletados',
+                -baseWidth/2 + 10, -baseHeight/2
+            )
+
+            if(sceneScope.level.isComplete) {
+
+                const updateTrashHitbox = (trashObj) => {
+                    trashObj.physics.hitbox.set(
+                        trashObj.position.x - 40, trashObj.position.y - 40 + 25,
+                        trashObj.position.x + 40, trashObj.position.y + 40 + 25
+                    )
+                }
+
+                if(!mouseIsPressed) sceneScope.trashBeingHeld = undefined
+
+                if(sceneScope.trashBeingHeld !== undefined) {
+                    const trashHeld = sceneScope.collectedTrash[sceneScope.trashBeingHeld]
+
+                    trashHeld.position.set(guiMouseX, guiMouseY - 30)
+
+                    for (let i = 0; i < sceneScope.trashBinGuiHitboxes.length; i++) {
+                        const hitbox = sceneScope.trashBinGuiHitboxes[i]
+                        hitbox.draw()
+                        
+                        if(hitbox.testCollisionPoint(guiMouseX, guiMouseY).hasHit) {
+                            trashHeld.scale.set(1.1, -1.1)
+                            break;
+                        } else {
+                            trashHeld.scale.set(1, -1)
+                        }
+                    }
+                }
+
+                for (let i = 0; i < sceneScope.collectedTrash.length; ++i) {
+                    const trash = sceneScope.collectedTrash[i]
+
+                    if(!sceneScope.trashLaidOutFlag) {
+                        trash.enabled = true
+                        trash.physics.enabled = false
+                        trash.position.set(i*120 - (sceneScope.collectedTrash.length - 1)*60, -200)
+                        trash.scale.set(1, -1)
+                    }
+
+                    updateTrashHitbox(trash)
+                    trash.draw()
+                    trash.physics.hitbox.draw()
+
+                    if(mouseIsPressed && trash.physics.hitbox.testCollisionPoint(guiMouseX, guiMouseY).hasHit && sceneScope.trashBeingHeld === undefined) {
+                        sceneScope.trashBeingHeld = i
+                    }
+                }
+                sceneScope.trashLaidOutFlag = true
+
+            }
 
             if(sceneScope.fadeInOpacity !== 0) {
                 fill(1, sceneScope.fadeInOpacity)
@@ -336,6 +407,7 @@ scenes.teste = new Scene('teste', {
                     sceneScope.fadeInOpacity = Math.max(sceneScope.fadeInOpacity - deltaTimeSeconds*0.75, 0)
             }
         })
+        drawPauseMenu()
 
         sceneScope.sceneTimer += deltaTimeSeconds
     },
@@ -344,8 +416,11 @@ scenes.teste = new Scene('teste', {
         const sceneScope = ctx.variables
 
         sceneScope.trashCount = 0
+        sceneScope.collectedTrash = []
 
         sceneScope.groundTilemap.enableAllColliders()
+
+        gameIsPausable = true
 
         sounds.sfx.ocean.play()
         sounds.music.wanko05.play(4)
@@ -356,6 +431,8 @@ scenes.teste = new Scene('teste', {
 
     onDisable: (ctx) => {
         const sceneScope = ctx.variables
+
+        gameIsPausable = false
 
         sceneScope.groundTilemap.disableAllColliders()
     }
@@ -512,11 +589,13 @@ function drawCurrentScene() {
     currentScene.draw()
 }
 
-function setCurrentScene(scene) {
+function setCurrentScene(scene, optionalVariables = {}) {
     if(currentScene !== undefined)
         currentScene.onDisable()
 
     currentScene = scene
+
+    Object.assign(currentScene.variables, optionalVariables)
 
     currentScene.onEnable()
 }

@@ -4,6 +4,7 @@ class Trash extends GameObject {
 
         this.type = undefined
         const rand = Math.floor(Math.random() * 5) + 1 // Número aleatório de 1 a 5
+        this.typeIndex = rand
         switch (rand) {
             case 1:
                 this.type = 'plastic'
@@ -34,8 +35,12 @@ class Trash extends GameObject {
         this.physics.tag = 'trash'
         this.physics.enabled = true
         this.physics.dynamic = true
+        this.setPickupCallback(callback)
+    }
+
+    setPickupCallback(action = () => {}) {
         this.physics.setCollisionCallback(() => {
-            callback()
+            action()
             if(!sounds.sfx.trash.isPlaying())
                 sounds.sfx.trash.play()
             this.disable()

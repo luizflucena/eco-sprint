@@ -2,16 +2,23 @@
 class Level {
     constructor(requiredTrash = 1) {
         this.requiredTrash = requiredTrash
-        this.completed = false
+        this.isComplete = false
+        this.locked = true
     }
 
     complete(trashCount) {
-        if(trashCount >= this.requiredTrash) {
-            debug.log('Nível completo')
-            player.lockControls()
-            this.completed = true
-        } else {
-            debug.log('Você ainda precisa de mais lixo')
-        }
+        player.lockControls()
+        this.isComplete = true
+        // if(trashCount >= this.requiredTrash) {
+        //     debug.log('Nível completo')
+        //     player.lockControls()
+        //     this.completed = true
+        // } else {
+        //     debug.log('Você ainda precisa de mais lixo')
+        // }
+    }
+
+    unlock() {
+        this.locked = false
     }
 }

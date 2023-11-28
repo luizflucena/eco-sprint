@@ -37,7 +37,7 @@ class GameAnimation {
     get currentSprite() {
         const images = this.spriteSheet.images
 
-        if(this._paused) return images[this._currentSpriteIndex];
+        if(this._paused || gameIsPaused) return images[this._currentSpriteIndex];
 
         if(this._frameCount >= this.framePause) {
             if(this._currentSpriteIndex === this.to)

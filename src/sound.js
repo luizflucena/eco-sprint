@@ -1,7 +1,7 @@
 // @ts-nocheck
 function setupSound() {
     outputVolume(0.1)
-    outputVolume(0) 
+    // outputVolume(0) 
 
     sounds.music.wanko05.setLoop(true)
     // sounds.music.wanko05.setVolume(0)

@@ -21,7 +21,7 @@ class Player extends GameObject {
     }
 
     walkLeft() {
-        if(this._controlsLocked) return;
+        if(this._controlsLocked || gameIsPaused) return;
 
         player.physics.applyForce(-this.acceleration * deltaTimeSeconds, 0)
 
@@ -30,7 +30,7 @@ class Player extends GameObject {
     }
 
     walkRight() {
-        if(this._controlsLocked) return;
+        if(this._controlsLocked || gameIsPaused) return;
 
         player.physics.applyForce(this.acceleration * deltaTimeSeconds, 0)
 
@@ -39,7 +39,7 @@ class Player extends GameObject {
     }
 
     jump() {
-        if(this._controlsLocked) return;
+        if(this._controlsLocked || gameIsPaused) return;
 
         if(this.physics.grounded) {
             this.physics.velocity.y = 20
