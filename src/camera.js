@@ -1,5 +1,5 @@
 var mainCam
-var orthoScale = 2
+const defaultOrthoScale = 2
 var camSmoothness = Vector2.create(0.2, 0.5)
 
 var cameraPosition = Vector2.zero
@@ -14,6 +14,7 @@ function setupCamera() {
 	setCameraOrthoScale(orthoScale)
 }
 
+var orthoScale = defaultOrthoScale
 function setCameraOrthoScale(scale) {
 	orthoScale = scale * scaleProportionality
 

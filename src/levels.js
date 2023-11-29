@@ -1,24 +1,20 @@
+const allLevels = []
 // Apenas para a lógica de cada nível, o conteúdo está em scenes.js
 class Level {
     constructor(requiredTrash = 1) {
         this.requiredTrash = requiredTrash
         this.isComplete = false
-        this.locked = true
+        this.isLocked = true
+
+        allLevels.push(this)
     }
 
-    complete(trashCount) {
-        player.lockControls()
+    complete() {
         this.isComplete = true
-        // if(trashCount >= this.requiredTrash) {
-        //     debug.log('Nível completo')
-        //     player.lockControls()
-        //     this.completed = true
-        // } else {
-        //     debug.log('Você ainda precisa de mais lixo')
-        // }
+        setCurrentScene(scenes.levelSelect)
     }
 
     unlock() {
-        this.locked = false
+        this.isLocked = false
     }
 }

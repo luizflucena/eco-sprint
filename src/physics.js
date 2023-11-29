@@ -27,9 +27,12 @@ class PhysicsObject {
         this.horizontalDrag = 0
 
         this.velocity = Vector2.zero
-        this._velocityCorrection = Vector2.zero
 
         allPhysicsObjects.push(this)
+    }
+
+    reset() {
+        this.velocity = Vector2.zero
     }
 
     // action(physicsObject, parentObject, HitInfo)

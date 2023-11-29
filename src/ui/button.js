@@ -33,12 +33,13 @@ class Button {
         this._originalSize = this.size.copy()
         this.borderRadius = 10
 
-        const playClickSound = () => { sounds.sfx.click.play() }
-
-        this.onClick = () => { if(functions.onClick) functions.onClick(this); playClickSound() }
-        this.mouseIsPressed = () => { if(functions.mouseIsPressed) functions.mouseIsPressed(this) }
-        this.onHover = () => { if(functions.onHover) functions.onHover(this) }
-        this.onNotHover = () => { if(functions.onNotHover) functions.onNotHover(this) }
+        this.onClick = () => { sounds.sfx.click.play() }
+        this.mouseIsPressed = () => {}
+        this.onHover = () => {}
+        this.onNotHover = () => {}
+        this.onDraw = () => {}
+        this.drawOnTop = () => {}
+        this.setCallbacks(functions)
 
         this.color = [1]
         this.texture = undefined
@@ -68,6 +69,21 @@ class Button {
         return this._originalSize
     }
 
+    setCallbacks(functions = {}) {
+        if(functions.onClick) this.onClick = () => { functions.onClick(this); sounds.sfx.click.play() }
+        if(functions.mouseIsPressed) this.mouseIsPressed = () => { functions.mouseIsPressed(this) }
+        if(functions.onHover) this.onHover = () => { functions.onHover(this) }
+        if(functions.onNotHover) this.onNotHover = () => { functions.onNotHover(this) }
+        if(functions.onDraw) this.onDraw = () => { functions.onDraw(this) }
+        if(functions.drawOnTop) this.drawOnTop = () => { functions.drawOnTop(this) }
+
+        // this.onClick = () => { if(functions.onClick) functions.onClick(this); sounds.sfx.click.play() }
+        // this.mouseIsPressed = () => { if(functions.mouseIsPressed) functions.mouseIsPressed(this) }
+        // this.onHover = () => { if(functions.onHover) functions.onHover(this) }
+        // this.onNotHover = () => { if(functions.onNotHover) functions.onNotHover(this) }
+        // this.onDraw = () => { if(functions.onDraw) functions.onDraw(this) }
+    }
+
     extendLeftAnimation(speed, amount) {
         const anim = deltaTimeSeconds * speed
 
@@ -91,6 +107,8 @@ class Button {
 
     draw() {
         if(!this.enabled) return;
+
+        this.onDraw()
 
         if(this.mouseOver()) {
             this.onHover()
@@ -117,6 +135,8 @@ class Button {
         text(this.text.text, this.position.x + this.text.offsetX, this.position.y + this.text.offsetY, this.size.x, this.size.y)
 
         pop()
+
+        this.drawOnTop()
 
         // this.hitbox.draw()
     }

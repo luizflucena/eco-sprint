@@ -27,6 +27,8 @@ function preload() {
     loadAndDefineImage('logo_glow.png')
     loadAndDefineImage('gradient.png')
     loadAndDefineImage('gradient_inverse.png')
+    loadAndDefineImage('check.png')
+    loadAndDefineImage('lock.png')
 
     loadAndDefineSound('music/wanko05.mp3')
     loadAndDefineSound('sfx/ocean.mp3')
@@ -35,6 +37,14 @@ function preload() {
     loadAndDefineSound('sfx/start.wav')
     loadAndDefineSound('sfx/jump2.wav')
     loadAndDefineSound('sfx/click.wav')
+    loadAndDefineSound('sfx/deny.wav')
+    loadAndDefineSound('sfx/correct.mp3')
+    loadAndDefineSound('sfx/incorrect.mp3')
+    loadAndDefineSound('sfx/plastic.mp3')
+    loadAndDefineSound('sfx/paper.mp3')
+    loadAndDefineSound('sfx/metal.mp3')
+    loadAndDefineSound('sfx/glass.mp3')
+    loadAndDefineSound('sfx/organic.wav')
 
     fonts.regular = loadFont('assets/fonts/Karla-Regular.ttf')
     fonts.bold = loadFont('assets/fonts/Karla-Bold.ttf')
