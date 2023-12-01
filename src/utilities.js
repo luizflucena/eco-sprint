@@ -51,3 +51,40 @@ function minAbs(a, b, c) {
 
     return arguments[i]
 }
+
+function multiText(textArgs = [], font, string) {
+    let current = 'font'
+    let offset = 0
+    let argsFrom1 = textArgs.slice(1)
+    let size = undefined
+
+    for (const key in arguments) {
+        if(key == 0) continue;
+
+        if(current === 'font') {
+            textFont(arguments[key])
+
+            current = 'string'
+        } else {
+            if(typeof arguments[key] === 'number') {
+                push()
+
+                size = arguments[key]
+                textSize(size)
+
+                continue;
+            }
+
+            text(arguments[key], textArgs[0] + offset, ...argsFrom1)
+
+            offset += textWidth(arguments[key])
+
+            if(size !== undefined) {
+                pop()
+                size = undefined
+            }
+
+            current = 'font'
+        }
+    }
+}

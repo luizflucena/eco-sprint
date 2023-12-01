@@ -1,5 +1,6 @@
 class ParallaxBackground {
     constructor(parallaxLayers = [], parallaxSpeed = [1, 1]) {
+        // 0 é a camada mais de trás
         this.parallaxLayers = parallaxLayers
         this.parallaxSpeed = parallaxSpeed
     }

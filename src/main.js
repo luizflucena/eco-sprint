@@ -42,7 +42,7 @@ function setup() {
 	setupCamera()
 
 	setupAllScenes()
-	setCurrentScene(scenes.menu) // Definir a cena inicial
+	setCurrentScene(scenes.levelSelect) // Definir a cena inicial
 }
 
 var deltaTimeSeconds
@@ -67,7 +67,7 @@ function draw() {
 
 function keyPressed() {
 	// Tecla esc
-	if(keyCode === 27) pauseGameToggle()
+	if(keyCode === 27) pauseToggle()
 
 
 	return false

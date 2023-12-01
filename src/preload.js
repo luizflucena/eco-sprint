@@ -2,7 +2,7 @@ var shaders = { pixelated: undefined, screen: undefined, parallax: undefined }
 var textures = { tiles: {}, spritesheets: {}, sprites: {}, bg: {} }
 var spriteSheets = { player: undefined, trash: undefined }
 var sounds = { music: {}, sfx: {} }
-var fonts = { regular: undefined, bold: undefined, extrabold: undefined, square: undefined }
+var fonts = { regular: undefined, bold: undefined, extrabold: undefined, keyboard: undefined }
 function preload() {
     loadAndDefineShader('pixelated')
     loadAndDefineShader('screen')
@@ -23,23 +23,27 @@ function preload() {
     loadAndDefineImage('bg/menu.png')
     loadAndDefineImage('sprites/umbrella.png')
     loadAndDefineImage('sprites/bins.png')
-    loadAndDefineImage('logo.png')
+    // loadAndDefineImage('logo.png')
     loadAndDefineImage('logo_glow.png')
     loadAndDefineImage('gradient.png')
     loadAndDefineImage('gradient_inverse.png')
     loadAndDefineImage('check.png')
     loadAndDefineImage('lock.png')
+    loadAndDefineImage('home.png')
+    loadAndDefineImage('audio_off.png')
+    loadAndDefineImage('audio_on.png')
 
     loadAndDefineSound('music/wanko05.mp3')
     loadAndDefineSound('sfx/ocean.mp3')
     loadAndDefineSound('sfx/jump.wav')
+    loadAndDefineSound('sfx/jump2.wav')
     loadAndDefineSound('sfx/trash.wav')
     loadAndDefineSound('sfx/start.wav')
-    loadAndDefineSound('sfx/jump2.wav')
     loadAndDefineSound('sfx/click.wav')
     loadAndDefineSound('sfx/deny.wav')
     loadAndDefineSound('sfx/correct.mp3')
     loadAndDefineSound('sfx/incorrect.mp3')
+    loadAndDefineSound('sfx/complete.mp3')
     loadAndDefineSound('sfx/plastic.mp3')
     loadAndDefineSound('sfx/paper.mp3')
     loadAndDefineSound('sfx/metal.mp3')
@@ -49,7 +53,7 @@ function preload() {
     fonts.regular = loadFont('assets/fonts/Karla-Regular.ttf')
     fonts.bold = loadFont('assets/fonts/Karla-Bold.ttf')
     fonts.extrabold = loadFont('assets/fonts/Karla-ExtraBold.ttf')
-    fonts.square = loadFont('assets/fonts/Square.ttf')
+    fonts.keyboard = loadFont('assets/fonts/212 Keyboard.otf')
 }
 
 /* -------------------------------------------------------------------------- */

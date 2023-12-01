@@ -44,9 +44,6 @@ void main() {
         tileUV(uvs[i], 1.);
     }
 
-    // uv = vTexCoord + uPlayerPos.x*0.;
-    // pixelateUV(uv, uRes);
-    // tileUV(uv, 1.);
     layers[0] = texture2D(uLayer0, uvs[0]);
     layers[1] = texture2D(uLayer1, uvs[1]);
     layers[2] = texture2D(uLayer2, uvs[2]);

@@ -163,17 +163,32 @@ scenes.levelSelect = new Scene('level select', {
                 }
 
                 sounds.sfx.start.play()
-                setCurrentScene(scenes.teste)
+                setCurrentScene(scenes.level1)
             },
 
             onDraw: (b) => {
-                if(levelLocked(1))
-                    updateLockedButton(b)
+                if(levelLocked(1)) {
+                    b.color = [0.5, 0.5]
+                    b.text.text = ''
+                    b.imageOverlay.image = textures.lock
+                } else {
+                    b.color = [1]
+                    b.text.text = '1'
+
+                    if(allLevels[0].isComplete) {
+                        b.imageOverlay.image = textures.check
+                        b.imageOverlay.size = 64
+                        b.imageOverlay.offsetX = 62
+                        b.imageOverlay.offsetY = -15
+                    } else {
+                        b.imageOverlay.image = undefined
+                    }
+                }
             },
 
-            drawOnTop: (b) => {
+            onHover: (b) => {
                 if(!levelLocked(1))
-                    updateUnlockedButton(b, 1)
+                    b.color = [0.9]
             }
         })
         buttons.push(lvl1)
@@ -190,15 +205,31 @@ scenes.levelSelect = new Scene('level select', {
             },
 
             onDraw: (b) => {
-                if(levelLocked(2))
-                    updateLockedButton(b)
+                if(levelLocked(2)) {
+                    b.color = [0.5, 0.5]
+                    b.text.text = ''
+                    b.imageOverlay.image = textures.lock
+                } else {
+                    b.color = [1]
+                    b.text.text = '2'
+                    
+                    if(allLevels[1].isComplete) {
+                        b.imageOverlay.image = textures.check
+                        b.imageOverlay.size = 64
+                        b.imageOverlay.offsetX = 62
+                        b.imageOverlay.offsetY = -15
+                    } else {
+                        b.imageOverlay.image = undefined
+                    }
+                }
             },
 
-            drawOnTop: (b) => {
+            onHover: (b) => {
                 if(!levelLocked(2))
-                    updateUnlockedButton(b, 2)
+                    b.color = [0.9]
             }
         })
+        lvl2.imageOverlay.padding = 40
         buttons.push(lvl2)
 
         buttonMode(CORNER)
@@ -206,6 +237,14 @@ scenes.levelSelect = new Scene('level select', {
         const voltar = new Button('Voltar', baseWidth/2 - 260, baseHeight/2 - 120, 260, 80, {
             onClick: () => {
                 setCurrentScene(scenes.menu)
+            },
+
+            onHover: (b) => {
+                b.extendLeftAnimation(400, 25)
+            },
+
+            onNotHover: (b) => {
+                b.contractToOriginal(400)
             }
         })
         voltar.text.color = [1]
@@ -240,7 +279,7 @@ scenes.levelSelect = new Scene('level select', {
 
             textFont(fonts.extrabold)
             textSize(65)
-            text('Selecionar fase', 0, -200)
+            text('Selecionar fase', 0, -170)
 
             for (let i = 0; i < sceneScope.buttons.length; ++i) {
                 sceneScope.buttons[i].draw()
@@ -265,7 +304,7 @@ scenes.levelSelect = new Scene('level select', {
     }
 })
 
-scenes.teste = new Scene('teste', {
+scenes.level1 = new Scene('level1', {
     setup: (ctx) => {
         const sceneScope = ctx.variables
 
@@ -393,7 +432,7 @@ scenes.teste = new Scene('teste', {
             textAlign(LEFT, TOP)
             textSize(50)
             text(
-                sceneScope.collectedTrash.length + '/' + sceneScope.level.requiredTrash + ' lixos coletados',
+                sceneScope.collectedTrash.length + (sceneScope.collectedTrash.length === 1 ? ' lixo coletado' : ' lixos coletados'),
                 -baseWidth/2 + 10, -baseHeight/2
             )
 
@@ -413,10 +452,11 @@ scenes.teste = new Scene('teste', {
 
                     for (let bin = 0; bin < sceneScope.trashBinGuiHitboxes.length; ++bin) {
                         const hitbox = sceneScope.trashBinGuiHitboxes[bin]
-                        hitbox.draw()
+                        // hitbox.draw()
                         
                         if(hitbox.testCollisionPoint(guiMouseX, guiMouseY).hasHit) {
-                            trashHeld.scale.set(1.1, -1.1)
+                            trashHeld.scale.set(1.3, -1.3)
+                            trashHeld.position.sub(0, 15)
                             
                             if(!mouseIsPressed) {
                                 if(trashHeld.typeIndex === bin) {
@@ -453,7 +493,7 @@ scenes.teste = new Scene('teste', {
 
                     updateTrashHitbox(trash)
                     trash.draw()
-                    trash.physics.hitbox.draw()
+                    // trash.physics.hitbox.draw()
 
                     if(mouseIsPressed && trash.physics.hitbox.testCollisionPoint(guiMouseX, guiMouseY).hasHit && sceneScope.trashBeingHeld === undefined) {
                         sceneScope.trashBeingHeld = i
@@ -487,6 +527,7 @@ scenes.teste = new Scene('teste', {
                 if(allTrashDisposed) {
                     allLevels[1].unlock()
                     sceneScope.level.complete()
+                    sounds.sfx.complete.play()
                 }
 
             }
@@ -513,6 +554,7 @@ scenes.teste = new Scene('teste', {
 
         sceneScope.trash.length = 0
         sceneScope.collectedTrash.length = 0
+        sceneScope.trashLaidOutFlag = false
         
         const trash = sceneScope.trash
         trash.push(new Trash(5, 1))
@@ -529,9 +571,10 @@ scenes.teste = new Scene('teste', {
 
         sounds.sfx.ocean.play()
         sounds.music.wanko05.play(4)
+        sounds.music.wanko05.setVolume(0.8)
 
         player.unlockControls()
-        player.position.set(15200, 100)
+        player.position.set(0, 100)
 
         mainCam.setPosition(player.position.x, player.position.y + 2000, -20)
         setCameraOrthoScale(defaultOrthoScale)
@@ -549,7 +592,8 @@ scenes.teste = new Scene('teste', {
         sceneScope.groundTilemap.disableAllColliders()
 
         sounds.sfx.ocean.stop()
-        sounds.music.wanko05.stop()
+        sounds.music.wanko05.setVolume(0, 1)
+        sounds.music.wanko05.stop(1)
 
         player.physics.reset()
 
@@ -574,6 +618,14 @@ scenes.controles = new Scene('controles', {
         const voltar = new Button('Voltar', baseWidth/2 - 260, baseHeight/2 - 120, 260, 80, {
             onClick: () => {
                 setCurrentScene(scenes.menu)
+            },
+
+            onHover: (b) => {
+                b.extendLeftAnimation(400, 25)
+            },
+
+            onNotHover: (b) => {
+                b.contractToOriginal(400)
             }
         })
         voltar.text.offsetY = -7
@@ -601,6 +653,57 @@ scenes.controles = new Scene('controles', {
             fill(0, 0, 0, 0.7)
             rect(0, 0, baseWidth, baseHeight)
 
+            textAlign(CENTER, CENTER)
+            fill(1)
+
+            const y = 30
+
+            textFont(fonts.extrabold)
+            textSize(65)
+            text('Como jogar', 0, -200 + y)
+
+            textSize(45)
+            textAlign(LEFT, TOP)
+
+            multiText([baseWidth/2 - 295.56, -120 + y, baseWidth],
+                fonts.bold,
+                'Corra ',
+                fonts.regular,
+                'usando ',
+                fonts.keyboard, 72,
+                'AD',
+                fonts.regular,
+                ' ',
+                fonts.regular,
+                'ou ',
+                fonts.keyboard, 72,
+                'st',
+            )
+
+            multiText([baseWidth/2 - 281.85, -50 + y, baseWidth],
+                fonts.bold,
+                'Pule ',
+                fonts.regular,
+                'usando ',
+                fonts.keyboard, 72,
+                'w',
+                fonts.regular,
+                ' ',
+                fonts.regular,
+                'ou ',
+                fonts.keyboard, 72,
+                'q',
+            )
+
+            multiText([baseWidth/2 - 376.83, 35 + y, baseWidth],
+                fonts.bold,
+                'Colete ',
+                fonts.regular,
+                'os lixos jogados pelas fases e'
+            )
+            textAlign(CENTER, TOP)
+            text('descarte-os nas lixeiras adequadas', 0, 90 + y, baseWidth)
+
             sceneScope.voltar.draw()
         })
     },
@@ -627,6 +730,14 @@ scenes.creditos = new Scene('creditos', {
         const voltar = new Button('Voltar', baseWidth/2 - 260, baseHeight/2 - 120, 260, 80, {
             onClick: () => {
                 setCurrentScene(scenes.menu)
+            },
+
+            onHover: (b) => {
+                b.extendLeftAnimation(400, 25)
+            },
+
+            onNotHover: (b) => {
+                b.contractToOriginal(400)
             }
         })
         voltar.text.offsetY = -7

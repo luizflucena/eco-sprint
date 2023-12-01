@@ -38,11 +38,17 @@ class Button {
         this.onHover = () => {}
         this.onNotHover = () => {}
         this.onDraw = () => {}
-        this.drawOnTop = () => {}
         this.setCallbacks(functions)
 
         this.color = [1]
         this.texture = undefined
+        this.imageOverlay = {
+            image: undefined,
+            size: undefined,
+            padding: 0,
+            offsetX: 0,
+            offsetY: 0
+        }
 
         this.text = {
             text: text,
@@ -69,19 +75,22 @@ class Button {
         return this._originalSize
     }
 
+    setPosition(x, y) {
+        if(_buttonMode === 'center') {
+            x -= this.size.x/2
+            y -= this.size.y/2
+        }
+
+        this.position.x = x
+        this.position.y = arguments.length === 2 ? y : this.position.y
+    }
+
     setCallbacks(functions = {}) {
         if(functions.onClick) this.onClick = () => { functions.onClick(this); sounds.sfx.click.play() }
         if(functions.mouseIsPressed) this.mouseIsPressed = () => { functions.mouseIsPressed(this) }
         if(functions.onHover) this.onHover = () => { functions.onHover(this) }
         if(functions.onNotHover) this.onNotHover = () => { functions.onNotHover(this) }
         if(functions.onDraw) this.onDraw = () => { functions.onDraw(this) }
-        if(functions.drawOnTop) this.drawOnTop = () => { functions.drawOnTop(this) }
-
-        // this.onClick = () => { if(functions.onClick) functions.onClick(this); sounds.sfx.click.play() }
-        // this.mouseIsPressed = () => { if(functions.mouseIsPressed) functions.mouseIsPressed(this) }
-        // this.onHover = () => { if(functions.onHover) functions.onHover(this) }
-        // this.onNotHover = () => { if(functions.onNotHover) functions.onNotHover(this) }
-        // this.onDraw = () => { if(functions.onDraw) functions.onDraw(this) }
     }
 
     extendLeftAnimation(speed, amount) {
@@ -136,7 +145,13 @@ class Button {
 
         pop()
 
-        this.drawOnTop()
+        if(this.imageOverlay.image !== undefined) {
+            const p = this.imageOverlay.padding
+            const offX = this.imageOverlay.offsetX
+            const offY = this.imageOverlay.offsetY
+            const size = this.imageOverlay.size
+            image(this.imageOverlay.image, this.position.x + p/2 + offX, this.position.y + p/2 + offY, (size || this.size.x - p), (size || this.size.y - p))
+        }
 
         // this.hitbox.draw()
     }
