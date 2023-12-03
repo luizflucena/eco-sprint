@@ -279,7 +279,7 @@ scenes.levelSelect = new Scene('level select', {
 
             textFont(fonts.extrabold)
             textSize(65)
-            text('Selecionar fase', 0, -170)
+            text('Selecione uma fase', 0, -170)
 
             for (let i = 0; i < sceneScope.buttons.length; ++i) {
                 sceneScope.buttons[i].draw()
@@ -320,31 +320,39 @@ scenes.level1 = new Scene('level1', {
         sceneScope.beachBg = beachBg
 
         const groundTilemap = new Tilemap()
-        groundTilemap.tileLineFill(-30, -11, 10, 5, -30, textures.tiles.sand)
+        const sand = textures.tiles.sand
+        groundTilemap.tileLineFill(-30, -11, 10, 5, -30, sand)
 
-        groundTilemap.tileLineFill(-10, 66, 0, -5, -20, textures.tiles.sand)
-        groundTilemap.tileLineFill(67, 100, -5, -5, -20, textures.tiles.sand)
+        groundTilemap.tileLineFill(-10, 66, 0, -5, -20, sand)
+        groundTilemap.tileLineFill(67, 100, -5, -5, -20, sand)
 
-        groundTilemap.tileLineFill(21, 26, -1, -1, -2, textures.tiles.sand)
-        groundTilemap.tileLineFill(31, 53, 1, 3, -2, textures.tiles.sand)
+        groundTilemap.tileLineFill(21, 26, -1, -1, -2, sand)
+        groundTilemap.tileLineFill(31, 53, 1, 3, -2, sand)
 
-        groundTilemap.tileLineFill(78, 92, 4, 1, -3, textures.tiles.sand)
-        groundTilemap.tileLineFill(78, 85, 4, -3, -3, textures.tiles.sand)
-        groundTilemap.tileLineFill(81, 92, 1, -2, -4, textures.tiles.sand)
-        groundTilemap.tileLineFill(93, 101, 2, -3, -6, textures.tiles.sand)
+        groundTilemap.tileLineFill(78, 92, 4, 1, -3, sand)
+        groundTilemap.tileLineFill(78, 85, 4, -3, -3, sand)
+        groundTilemap.tileLineFill(81, 92, 1, -2, -4, sand)
+        groundTilemap.tileLineFill(93, 101, 2, -3, -6, sand)
 
-        groundTilemap.tileLineFill(101, 150, -5, -10, -20, textures.tiles.sand)
-        groundTilemap.tileLineFill(151, 200, -10, -10, -20, textures.tiles.sand)
+        groundTilemap.tileLineFill(101, 150, -5, -10, -20, sand)
+        groundTilemap.tileLineFill(125, 134, -7, -4, -4, sand)
+        groundTilemap.tileLineFill(145, 160, 0, -2, -4, sand)
+        groundTilemap.tileLineFill(142, 143, -8, -8, -1, sand)
+        groundTilemap.tileLineFill(151, 165, -10, -10, -20, sand)
+        groundTilemap.tileLineFill(166, 200, -10, -12, -20, sand)
         sceneScope.groundTilemap = groundTilemap
 
         const umbrellas = sceneScope.umbrellas = []
+        umbrellas.push(new Umbrella(9, 0))
         umbrellas.push(new Umbrella(61, -4))
         umbrellas.push(new Umbrella(72, -4))
+        umbrellas.push(new Umbrella(112, -5))
+        umbrellas.push(new Umbrella(137, -8))
 
         const trash = sceneScope.trash = []
         sceneScope.collectedTrash = []
 
-        const levelEnd = sceneScope.levelEnd = new TrashBin(155, -9)
+        const levelEnd = sceneScope.levelEnd = new TrashBin(196, -11)
         levelEnd.physics.setCollisionEnterCallback(() => {
             lockCameraOnPoint(levelEnd.position.x, levelEnd.position.y + 50)
             setCameraOrthoScale(0.7)
@@ -366,7 +374,7 @@ scenes.level1 = new Scene('level1', {
             }
         })
         levelEnd.physics.setCollisionCallback(() => {
-            if(!sceneScope.playerAtLevelEndFlag || player.position.x > 15600) return;
+            if(!sceneScope.playerAtLevelEndFlag || player.position.x > levelEnd.position.x + 100) return;
 
             player.physics.applyForce(player.acceleration * deltaTimeSeconds, 0)
 
@@ -559,7 +567,10 @@ scenes.level1 = new Scene('level1', {
         const trash = sceneScope.trash
         trash.push(new Trash(5, 1))
         trash.push(new Trash(67, -3))
+        trash.push(new Trash(80, -3))
+        trash.push(new Trash(82, 5))
         trash.push(new Trash(107, -4))
+        trash.push(new Trash(146, 1))
         trash.push(new Trash(150, -8))
         trash.forEach((t) => {
             t.setPickupCallback(() => {
@@ -574,7 +585,7 @@ scenes.level1 = new Scene('level1', {
         sounds.music.wanko05.setVolume(0.8)
 
         player.unlockControls()
-        player.position.set(0, 100)
+        player.position.set(12200, 100)
 
         mainCam.setPosition(player.position.x, player.position.y + 2000, -20)
         setCameraOrthoScale(defaultOrthoScale)

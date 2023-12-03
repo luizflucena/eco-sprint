@@ -42,7 +42,7 @@ function setup() {
 	setupCamera()
 
 	setupAllScenes()
-	setCurrentScene(scenes.levelSelect) // Definir a cena inicial
+	setCurrentScene(scenes.menu) // Definir a cena inicial
 }
 
 var deltaTimeSeconds
