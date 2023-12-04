@@ -96,7 +96,6 @@ function drawPlayer() {
 
     // player.physics.hitbox.draw()
     player.draw()
-    debug.updateGauge('free', player.animation !== undefined ? player.animation.currentAnimationFrame : -1)
 
     if(player.physics.velocity.x !== 0)
         if(Math.abs(player.physics.velocity.x) < player.maxVelocity - 1) {
@@ -113,7 +112,4 @@ function drawPlayer() {
         }
     else
         player.removeAnimation()
-
-    debug.updateGauge('playerVelocity', Math.round(player.physics.velocity.x) + ', ' + Math.round(player.physics.velocity.y))
-    debug.updateGauge('playerPos', Math.floor(player.position.x/100) + ', ' + Math.floor(player.position.y/100))
 }
