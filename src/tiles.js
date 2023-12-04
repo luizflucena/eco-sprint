@@ -124,12 +124,19 @@ class Tilemap {
         shaders.pixelated.setUniform('uSpriteRes', [tileRes, tileRes])
 
         for(let i = 0; i < this.tiles.length; ++i) {
-            if(
-                Math.abs(mainCam.eyeX - this.tiles[i].worldPosition.x) < 2000 &&
-                Math.abs(mainCam.eyeY - this.tiles[i].worldPosition.y) < 1200 ||
-                orthoScale > 12
-            )
-                this.tiles[i].draw()
+            if(orthoScale <= 2*scaleProportionality + 1e-2) {
+                if(
+                    Math.abs(mainCam.eyeX - this.tiles[i].worldPosition.x) < 1400 &&
+                    Math.abs(mainCam.eyeY - this.tiles[i].worldPosition.y) < 800
+                )
+                    this.tiles[i].draw()
+            } else {
+                if(
+                    Math.abs(mainCam.eyeX - this.tiles[i].worldPosition.x) < 2000 &&
+                    Math.abs(mainCam.eyeY - this.tiles[i].worldPosition.y) < 1200
+                )
+                    this.tiles[i].draw()
+            }
         }
 
         resetShader()

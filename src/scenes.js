@@ -308,7 +308,7 @@ scenes.level1 = new Scene('level1', {
     setup: (ctx) => {
         const sceneScope = ctx.variables
 
-        const level = sceneScope.level = new Level(4)
+        const level = sceneScope.level = new Level()
         level.unlock()
 
         const beachBg = new ParallaxBackground([
@@ -340,6 +340,8 @@ scenes.level1 = new Scene('level1', {
         groundTilemap.tileLineFill(142, 143, -8, -8, -1, sand)
         groundTilemap.tileLineFill(151, 165, -10, -10, -20, sand)
         groundTilemap.tileLineFill(166, 200, -10, -12, -20, sand)
+        groundTilemap.tileLineFill(201, 210, -9, -7, -20, sand)
+        groundTilemap.tileLineFill(211, 250, -7, -7, -20, sand, false)
         sceneScope.groundTilemap = groundTilemap
 
         const umbrellas = sceneScope.umbrellas = []
@@ -354,13 +356,18 @@ scenes.level1 = new Scene('level1', {
 
         const levelEnd = sceneScope.levelEnd = new TrashBin(196, -11)
         levelEnd.physics.setCollisionEnterCallback(() => {
+            if(sceneScope.collectedTrash.length < level.required) {
+                sounds.sfx.incorrect.play()
+
+                return;
+            }
+
             lockCameraOnPoint(levelEnd.position.x, levelEnd.position.y + 50)
             setCameraOrthoScale(0.7)
             sceneScope.playerAtLevelEndFlag = true
             player.lockControls()
 
             const guiHitboxes = sceneScope.trashBinGuiHitboxes = []
-            // guiHitboxes[0].transformHitbox(Vector2.create(-90, 0), 1)
             const translateVector = Vector2.zero
             const scaleVector = Vector2.create(0.7, 1)
             for (let i = 0; i < 5; i++) {
@@ -374,6 +381,23 @@ scenes.level1 = new Scene('level1', {
             }
         })
         levelEnd.physics.setCollisionCallback(() => {
+            if(sceneScope.collectedTrash.length < level.required) {
+                textSize(70)
+                textAlign(CENTER, CENTER)
+                const w = textWidth('Ainda há lixo jogado na praia')
+
+                translate(levelEnd.position.x, levelEnd.position.y + 165)
+
+                fill(0, 0.5)
+                rect(0, 0, w + 50, 100)
+
+                scale(1, -1)
+                fill(1)
+                text('Ainda há lixo jogado na praia', 0, -7)
+
+                return;
+            }
+
             if(!sceneScope.playerAtLevelEndFlag || player.position.x > levelEnd.position.x + 100) return;
 
             player.physics.applyForce(player.acceleration * deltaTimeSeconds, 0)
@@ -503,31 +527,106 @@ scenes.level1 = new Scene('level1', {
                     trash.draw()
                     // trash.physics.hitbox.draw()
 
-                    if(mouseIsPressed && trash.physics.hitbox.testCollisionPoint(guiMouseX, guiMouseY).hasHit && sceneScope.trashBeingHeld === undefined) {
-                        sceneScope.trashBeingHeld = i
+                    // textSize(45)
+                    // textAlign(CENTER, CENTER)
+                    // fill(1)
+                    // text('testando', guiMouseX, guiMouseY)
 
-                        switch (trash.typeIndex) {
-                            case 0:
-                                sounds.sfx.plastic.play()
-                                break;
+                    if(trash.physics.hitbox.testCollisionPoint(guiMouseX, guiMouseY).hasHit) {
+                        if(!mouseIsPressed) {
+                            push()
+
+                            textSize(30)
+                            textAlign(CENTER, CENTER)
+                            textFont(fonts.bold)
+
+                            translate(0, 0, 1)
+
+                            let s = 'indefinido'
+                            switch (trash.typeIndex) {
+                                case 0:
+                                    s = 'Garrafa de plástico'
+                                    break;
+                                
+                                case 1:
+                                    s = 'Papel amassado'
+                                    break;
+
+                                case 2:
+                                    s = 'Latinha de refri'
+                                    break;
+
+                                case 3:
+                                    s = 'Garrafa de vidro'
+                                    break;
+
+                                case 4:
+                                    s = 'Casca de banana'
+                                    break;
+                            }
+                            const w = textWidth(s)
                             
-                            case 1:
-                                sounds.sfx.paper.play()
-                                break;
+                            fill(0, 0.5)
+                            rect(guiMouseX, guiMouseY - 35, w + 15, 35)
 
-                            case 2:
-                                sounds.sfx.metal.play()
-                                break;
+                            fill(1)
+                            text(s, guiMouseX, guiMouseY - 35 - 4)
 
-                            case 3:
-                                sounds.sfx.glass.play()
-                                break;
+                            pop()
+                        }
 
-                            case 4:
-                                sounds.sfx.organic.play()
-                                break;
+                        if(mouseIsPressed && sceneScope.trashBeingHeld === undefined) {
+                            sceneScope.trashBeingHeld = i
+
+                            switch (trash.typeIndex) {
+                                case 0:
+                                    sounds.sfx.plastic.play()
+                                    break;
+                                
+                                case 1:
+                                    sounds.sfx.paper.play()
+                                    break;
+
+                                case 2:
+                                    sounds.sfx.metal.play()
+                                    break;
+
+                                case 3:
+                                    sounds.sfx.glass.play()
+                                    break;
+
+                                case 4:
+                                    sounds.sfx.organic.play()
+                                    break;
+                            }
                         }
                     }
+
+                    // if(mouseIsPressed && trash.physics.hitbox.testCollisionPoint(guiMouseX, guiMouseY).hasHit && sceneScope.trashBeingHeld === undefined) {
+                    //     sceneScope.trashBeingHeld = i
+
+                    //     switch (trash.typeIndex) {
+                    //         case 0:
+                    //             sounds.sfx.plastic.play()
+                    //             break;
+                            
+                    //         case 1:
+                    //             sounds.sfx.paper.play()
+                    //             break;
+
+                    //         case 2:
+                    //             sounds.sfx.metal.play()
+                    //             break;
+
+                    //         case 3:
+                    //             sounds.sfx.glass.play()
+                    //             break;
+
+                    //         case 4:
+                    //             sounds.sfx.organic.play()
+                    //             break;
+                    //     }
+                    // }
                 }
                 sceneScope.trashLaidOutFlag = true
 
@@ -566,17 +665,21 @@ scenes.level1 = new Scene('level1', {
         
         const trash = sceneScope.trash
         trash.push(new Trash(5, 1))
+        trash.push(new Trash(39, 4))
         trash.push(new Trash(67, -3))
         trash.push(new Trash(80, -3))
         trash.push(new Trash(82, 5))
         trash.push(new Trash(107, -4))
         trash.push(new Trash(146, 1))
         trash.push(new Trash(150, -8))
+        trash.push(new Trash(186, -9))
         trash.forEach((t) => {
             t.setPickupCallback(() => {
                 sceneScope.collectedTrash.push(t)
             })
         })
+
+        sceneScope.level.required = trash.length
 
         sceneScope.groundTilemap.enableAllColliders()
 
@@ -585,7 +688,7 @@ scenes.level1 = new Scene('level1', {
         sounds.music.wanko05.setVolume(0.8)
 
         player.unlockControls()
-        player.position.set(12200, 100)
+        player.position.set(0, 100)
 
         mainCam.setPosition(player.position.x, player.position.y + 2000, -20)
         setCameraOrthoScale(defaultOrthoScale)
@@ -616,7 +719,7 @@ scenes.level2 = new Scene('level2', {
     setup: (ctx) => {
         const sceneScope = ctx.variables
 
-        const level = sceneScope.level = new Level(6)
+        const level = sceneScope.level = new Level()
     }
 })
 

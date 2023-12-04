@@ -1,8 +1,8 @@
 const allLevels = []
 // Apenas para a lógica de cada nível, o conteúdo está em scenes.js
 class Level {
-    constructor(requiredTrash = 1) {
-        this.requiredTrash = requiredTrash
+    constructor() {
+        this.required = 1
         this.isComplete = false
         this.isLocked = true
 
